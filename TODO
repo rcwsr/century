@@ -1,5 +1,6 @@
 - Pages:
 	- add.php Add rides
+		- Needs validation
 	- edit.php Edit rides
 	- rides.php  All user rides
 		- graph of user distance over months
@@ -10,4 +11,8 @@
 - Features:
 	- graphs using Google Charts
 	- User auth
+            - Admin access
 	- Disable user access if not active for 1 month
+
+- README
+	- Prettify

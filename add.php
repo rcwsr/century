@@ -5,6 +5,8 @@ include('includes/header.php');
 require_once('classes/RideHelper.php');
 require_once('classes/Ride.php');
 
+$user_id = 1; //Hook for user auth.
+
 if(isset($_POST['submit'])){
     $km = $_POST['km'];
     $url = $_POST['url'];
@@ -27,7 +29,7 @@ if(isset($_POST['submit'])){
       <fieldset>
         <legend>Enter the details of your ride below</legend>
         
-        <label>Distance</label>
+        <label>Distance*</label>
         <div class="input-append">
             <input class="input-mini" type="text" name="km">
             <span class="add-on">km</span>
@@ -36,7 +38,7 @@ if(isset($_POST['submit'])){
         <label>Link to ride</label>
         <input type="text" name="url">
         
-        <label>Date</label>
+        <label>Date*</label>
         <input class="datepicker" type="text" name="date" >
         
         <label>Notes</label>
@@ -45,6 +47,7 @@ if(isset($_POST['submit'])){
         
       </fieldset>
         <button  type="submit" class="btn" name="submit">Submit</button>
+        <span class="help-inline">* denotes required field</span>
     </form>
 </div>
 <script>

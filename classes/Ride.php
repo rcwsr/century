@@ -18,7 +18,6 @@ class Ride{
         $this->setUrl($url);
         $this->setDate($date);
         $this->setDetails($details);
-       // $this->setPoints($km);  
         return $this;
     }
    
@@ -69,6 +68,8 @@ class Ride{
        elseif($km >= 150){
            //take first 100km off to work out additional points
            $km = $km - 100;
+           
+           //Could instead / 10?
            $this->points = 10 + floor($km/50) *5; //add
        }
        //under 100km you get 0 points.
