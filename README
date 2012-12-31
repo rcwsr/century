@@ -1,3 +1,10 @@
+Century Challenge
+
+Application aimed to automate the process of collecting and collating century 
+challenge data for LFCC
+
+DB:
+
 CREATE TABLE IF NOT EXISTS `ride` (
   `ride_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
