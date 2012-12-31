@@ -1,0 +1,9 @@
+Pages:
+	- add.php Add rides
+	- edit.php Edit rides
+	- rides.php  All user rides
+	- index.php Homepage
+		- Leaderboard
+
+Features:
+	- graphs using Google Charts
