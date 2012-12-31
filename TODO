@@ -1,9 +1,13 @@
--Pages:
--	- add.php Add rides
--	- edit.php Edit rides
--	- rides.php  All user rides
--	- index.php Homepage
--		- Leaderboard
--
--Features:
--	- graphs using Google Charts
+- Pages:
+	- add.php Add rides
+	- edit.php Edit rides
+	- rides.php  All user rides
+		- graph of user distance over months
+	- index.php Homepage
+		- Leaderboard
+		- This months distance graph
+
+- Features:
+	- graphs using Google Charts
+	- User auth
+	- Disable user access if not active for 1 month
