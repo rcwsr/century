@@ -1,0 +1,57 @@
+<?php
+require_once('Database.php');
+require_once('User.php');
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of UserHelper
+ *
+ * @author Robin
+ */
+class UserHelper {
+    //put your code here
+     private $dbc;
+    
+    public function __construct(){
+        $database = new Database();
+        $this->dbc = $database->connect();
+        //echo "Contruct!";
+    }
+    public function __destruct(){
+        $this->dbc = null;
+        //echo "Destruct!";
+    }
+    public function getUsers(){
+        try{
+            $sql = $this->dbc->prepare("SELECT * FROM user");
+            $sql->execute();
+            
+            $sql->setFetchMode(PDO::FETCH_OBJ);
+            $results = $sql->fetchAll();
+            
+            $users = array();
+            
+            foreach($results as $r){
+                $user = new User($r->user_id, $r->name);
+                $users[] = $user;
+            }
+            
+            //sort by points desc
+            usort($users, function($b, $a){
+                return strcmp($a->getPoints(), $b->getPoints());
+            });
+            
+            return $users;
+        }
+        catch(PDOException $e){
+		echo $e->getMessage();
+        }
+        
+    }
+    
+}
+
+?>

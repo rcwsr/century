@@ -21,10 +21,13 @@ if(isset($_POST['submit'])){
 
 ?>
 <div class="row">
-    <h1>Add Ride</h1>
+    <div class="span12">
+        <h1>Add Ride</h1>
+    </div>
 </div>
 
 <div class="row">
+    <div class="span12">
     <form method="post">
       <fieldset>
         <legend>Enter the details of your ride below</legend>
@@ -49,6 +52,7 @@ if(isset($_POST['submit'])){
         <button  type="submit" class="btn" name="submit">Submit</button>
         <span class="help-inline">* denotes required field</span>
     </form>
+    </div>
 </div>
 <script>
    $(function(){
