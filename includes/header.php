@@ -20,7 +20,7 @@
     </style>
   </head>
   <body>
-    <header class="navbar navbar-static-top">
+    <header class="navbar navbar-static-top navbar-inverse">
              <div class="navbar-inner">
                <div class="container">
 
@@ -32,7 +32,7 @@
                  </a>
 
 
-                 <a class="brand" href="#">Century Challenge</a>
+                 <a class="brand" href="index.php">Century Challenge</a>
 
 
                  <div class="nav-collapse collapse">

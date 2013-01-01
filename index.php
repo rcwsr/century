@@ -28,8 +28,11 @@ $rides = $rideHelper->getRides(4);
                 <tr>
                     <th>Name</th>
                     <th>Total</th>
-                    <th>January</th>
-                    <th>February</th>
+                   <?
+                    for($i = 1; $i <= (int)date('j'); $i++){
+                        echo '<th>'.date('F', mktime(0, 0, 0, $i)).'</th>';
+                    }
+                   ?>
                 </tr>
             </thead>
             
@@ -37,12 +40,15 @@ $rides = $rideHelper->getRides(4);
                 <?
                 foreach($users as $u){
                    echo '<tr>
-                        <td>'.$u->getName().'</td>
-                        <td>'.$u->getPoints().'</td>
-                        <td>'.$u->points('1',date('Y')).'</td>
-                        <td>'.$u->points('2',date('Y')).'</td>
+                        <td><a href="#">'.$u->getName().'</a></td>
+                        <td>'.$u->getPoints().'</td>';
+                        
+                     
+                    for($i = 1; $i <= (int)date('j'); $i++){
+                        echo '<td>'.$u->getPoints($i,date('Y')).'</td>';
+                    }
 
-                    </tr>';
+                   echo '</tr>';
                 }
                
                 ?>

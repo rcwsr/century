@@ -24,7 +24,7 @@ class UserHelper {
         $this->dbc = null;
         //echo "Destruct!";
     }
-    public function getUsers(){
+    public function getUsers($sort_by_points = true){
         try{
             $sql = $this->dbc->prepare("SELECT * FROM user");
             $sql->execute();
@@ -40,9 +40,12 @@ class UserHelper {
             }
             
             //sort by points desc
-            usort($users, function($b, $a){
-                return strcmp($a->getPoints(), $b->getPoints());
-            });
+            if($sort_by_points){
+                usort($users, function($b, $a){
+                    return strcmp($a->getPoints(), $b->getPoints());
+                });
+            }
+           
             
             return $users;
         }

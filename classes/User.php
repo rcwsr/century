@@ -37,11 +37,16 @@ class User {
         $this->name = $name;
     }
     
-    public function getPoints() {
-        return $this->points;
+    public function getPoints($month = null, $year = null) {
+        if($month == null && $year == null){
+            return $this->points;
+        }
+        else{
+            return $this->points($month, $year);
+        }
     }
     
-    public function points($month = null, $year = null){
+    private function points($month = null, $year = null){
         
         $rideHelper = new RideHelper();
         
