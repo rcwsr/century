@@ -110,7 +110,16 @@ class Ride{
     public function setDetails($details) {
         $this->details = $details;
     }
-    
+    public function __toString() {
+        $str = 'Ride_ID ['. $this->ride_id.
+                '], User_ID ['.$this->user_id.
+                '], KM ['.$this->km.
+                '], Points ['.$this->points.
+                '], Date ['.date('d-m-Y',strtotime($this->date)).']';
+        return $str;
+    }
+
+
 
 
 }

@@ -5,7 +5,7 @@ include('includes/header.php');
 require_once('classes/RideHelper.php');
 require_once('classes/Ride.php');
 
-$user_id = 1; //Hook for user auth.
+$user_id = rand(1,10); //Hook for user auth.
 
 if(isset($_POST['submit'])){
     $km = $_POST['km'];
@@ -31,7 +31,7 @@ if(isset($_POST['submit'])){
         
         <label>Distance*</label>
         <div class="input-append">
-            <input class="input-mini" type="text" name="km">
+            <input class="input-mini" type="text" name="km" value="<?=rand(100,200)?>">
             <span class="add-on">km</span>
         </div>
         
@@ -39,7 +39,7 @@ if(isset($_POST['submit'])){
         <input type="text" name="url">
         
         <label>Date*</label>
-        <input class="datepicker" type="text" name="date" >
+        <input class="datepicker" type="text" name="date" value="2013-0<?=rand(1,2).'-'.rand(1,30)?>" >
         
         <label>Notes</label>
         <textarea name="details" class="input-xxlarge" rows="8"></textarea>
