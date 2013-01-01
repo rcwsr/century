@@ -1,7 +1,9 @@
 <?php
-namespace Century;
+
 require_once('Database.php');
 require_once('User.php');
+
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.

@@ -1,5 +1,5 @@
 <?php
-namespace Century;
+
 class Database{
 	/**
 	 ** The databaseConnect() function is the core function for opening

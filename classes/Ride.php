@@ -1,5 +1,5 @@
 <?php
-namespace Century;
+
 
 class Ride{
     private $ride_id;
