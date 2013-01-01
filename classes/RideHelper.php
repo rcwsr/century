@@ -1,6 +1,9 @@
 <?php
+namespace Century;
+
 require_once('Database.php');
 require_once('Ride.php');
+
 class RideHelper{
         private $dbc;
     

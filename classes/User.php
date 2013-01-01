@@ -1,4 +1,5 @@
 <?php
+namespace Century;
 require_once('classes/RideHelper.php');
 /*
  * To change this template, choose Tools | Templates
