@@ -5,6 +5,10 @@ challenge data for LFCC
 
 DB:
 
+--
+-- Table structure for table `ride`
+--
+
 CREATE TABLE IF NOT EXISTS `ride` (
   `ride_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
@@ -16,4 +20,20 @@ CREATE TABLE IF NOT EXISTS `ride` (
   `date_modified` datetime DEFAULT NULL,
   `details` longtext,
   PRIMARY KEY (`ride_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=41 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user`
+--
+
+CREATE TABLE IF NOT EXISTS `user` (
+  `user_id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` text,
+  `name` text,
+  `forum_name` text,
+  `active` tinyint(4) DEFAULT '0',
+  `strava` text,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=11 ;
