@@ -39,7 +39,7 @@
                      <ul class="nav">
                            <li><a href="index.php">Home</a></li>
                            <li><a href="add.php">Add Ride</a></li>
-                           <li><a href="rides.php">Your Ride</a></li>
+                           <li><a href="rides.php">Your Rides</a></li>
                      </ul>
                  </div>
 

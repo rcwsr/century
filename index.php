@@ -63,16 +63,6 @@ $rides = $rideHelper->getRides(4);
      <h1>Latest Rides</h1>
     </div>
 </div>
-<?
-
-foreach($rides as $r){
-    //echo $r.'<br>';
-}
-
-?>
-
-
-
 <?php
 include('includes/footer.php');
 ?>

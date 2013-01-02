@@ -102,8 +102,7 @@ class Ride{
     public function setDate_modified($date_modified) {
         $this->date_modified = $date_modified;
     }
-
-        
+    
     public function getDetails() {
         return $this->details;
     }
