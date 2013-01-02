@@ -2,17 +2,21 @@
 	- add.php Add rides
 		- Needs validation
 	- edit.php Edit rides
-	- rides.php  All user rides
+	- rides.php  User rides
 		- graph of user distance over months
 	- index.php Homepage
-		- Leaderboard
-		- This months distance graph
+		- Leaderboard [DONE]
+		- This month's distance graph
+        -.htaccess
+                - Make nice URLs
 
 - Features:
-	- graphs using Google Charts
+	- Rides
+            - Think about handling users that have not submitted a ride in a month
 	- User auth
+            - User login
+                - Merge and minimise auth classes with Century
             - Admin access
-	- Disable user access if not active for 1 month
-
+        - graphs using Google Charts
 - README
 	- Prettify
