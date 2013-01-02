@@ -3,6 +3,7 @@
 		- Needs validation
 	- edit.php Edit rides
 	- rides.php  User rides
+                - Make nice the rides under each month.
 		- graph of user distance over months
 	- index.php Homepage
 		- Leaderboard [DONE]
@@ -20,3 +21,5 @@
         - graphs using Google Charts
 - README
 	- Prettify
+- EXTRA
+        - programmatically create pngs/jpg with user stats on for forum signatures
