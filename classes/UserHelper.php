@@ -38,7 +38,7 @@ class UserHelper {
             $users = array();
             
             foreach($results as $r){
-                $user = new User($r->user_id, $r->name);
+                $user = new User($r->user_id, $r->username, $r->name);
                 $users[] = $user;
             }
             
@@ -51,6 +51,33 @@ class UserHelper {
            
             
             return $users;
+        }
+        catch(PDOException $e){
+		echo $e->getMessage();
+        }
+        
+    }
+    
+     public function getUser($username){
+        try{
+            if(is_numeric($username)){
+                $sql = $this->dbc->prepare("SELECT * FROM user WHERE user_id = ?");
+            }
+            else{
+                $sql = $this->dbc->prepare("SELECT * FROM user WHERE username = ?");
+            }
+            $sql->execute(array($username));
+            
+            $sql->setFetchMode(PDO::FETCH_OBJ);
+            $results = $sql->fetchAll();
+
+            foreach($results as $r){
+                $user = new User($r->user_id, $r->username, $r->name);
+                break;
+            }
+
+            
+            return $user;
         }
         catch(PDOException $e){
 		echo $e->getMessage();

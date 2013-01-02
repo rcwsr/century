@@ -13,16 +13,25 @@ require_once('classes/RideHelper.php');
  */
 class User {
     private $user_id;
+    private $username;
     private $name;
     private $points;
     
-    public function __construct($user_id, $name) {
+    public function __construct($user_id, $username, $name) {
         $this->user_id = $user_id;
+        $this->username = $username;
         $this->name = $name;
         $this->points = $this->points();
     }
+    public function getUsername() {
+        return $this->username;
+    }
 
-    public function getUser_id() {
+    public function setUsername($username) {
+        $this->username = $username;
+    }
+
+        public function getUser_id() {
         return $this->user_id;
     }
 
