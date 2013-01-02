@@ -29,7 +29,7 @@ $rides = $rideHelper->getRides(4);
                     <th>Name</th>
                     <th>Total</th>
                    <?
-                    for($i = 1; $i <= (int)date('j'); $i++){
+                    for($i = 1; $i <= (int)date('n'); $i++){
                         echo '<th>'.date('F', mktime(0, 0, 0, $i)).'</th>';
                     }
                    ?>
@@ -44,7 +44,7 @@ $rides = $rideHelper->getRides(4);
                         <td>'.$u->getPoints().'</td>';
                         
                      
-                    for($i = 1; $i <= (int)date('j'); $i++){
+                    for($i = 1; $i <= (int)date('n'); $i++){
                         echo '<td>'.$u->getPoints($i,date('Y')).'</td>';
                     }
 

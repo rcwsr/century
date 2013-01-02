@@ -27,6 +27,67 @@ class UserHelper {
         $this->dbc = null;
         //echo "Destruct!";
     }
+    public function addUser(User $user){
+        try{
+            $sql = $this->dbc->prepare("INSERT INTO user (username, email, password, user_key, name, forum_name, strava) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $sql->execute(array($user->getUsername(),
+                                $user->getEmail(),
+                                $user->getPassword(),
+                                $user->getKey(),
+                                $user->getName(),
+                                $user->getForum_name(),
+                                $user->getStrava() 
+                                ));
+        }
+        catch(PDOException $e){
+                echo $e->getMessage();
+        }
+    }
+    public function updateUser(User $user){
+        try{
+            $sql = $this->dbc->prepare("UPDATE user SET username=?, email=?, password=?, user_key=?, name=?, forum_name=?, strava=?, active=? WHERE user_id = ?");
+            $sql->execute(array($user->getUsername(),
+                                $user->getEmail(),
+                                $user->getPassword(),
+                                $user->getKey(),
+                                $user->getName(),
+                                $user->getForum_name(),
+                                $user->getStrava(),
+                                $user->getActive(),
+                                $user->getUser_id()
+                        ));
+        }
+        catch(PDOException $e){
+                echo $e->getMessage();
+        }
+	}
+    public function usernameExists(User $user){
+		$users = $this->getUsers(false);
+
+		foreach($users as $u){
+			if($user->getUsername() == $u->getUsername()){
+				return true;break;
+			}
+		}
+	}
+	public function emailExists(User $user){
+		$users = $this->getUsers(false);
+
+		foreach($users as $u){
+			if($user->getEmail() == $u->getEmail()){
+				return true;break;
+			}
+		}
+	}
+	public function keyExists($key){
+		$users = $this->getUsers(false);
+
+		foreach($users as $u){
+			if($key == $u->getKey()){
+				return true;break;
+			}
+		}
+	}
     public function getUsers($sort_by_points = true){
         try{
             $sql = $this->dbc->prepare("SELECT * FROM user");
@@ -38,7 +99,15 @@ class UserHelper {
             $users = array();
             
             foreach($results as $r){
-                $user = new User($r->user_id, $r->username, $r->name);
+                $user = new User($r->user_id,
+                                 $r->username,
+                                 $r->email,
+                                 $r->password,
+                                 $r->user_key,
+                                 $r->active,
+                                 $r->forum_name,
+                                 $r->strava,
+                                 $r->name);
                 $users[] = $user;
             }
             
@@ -72,7 +141,15 @@ class UserHelper {
             $results = $sql->fetchAll();
 
             foreach($results as $r){
-                $user = new User($r->user_id, $r->username, $r->name);
+                $user = new User($r->user_id,
+                                 $r->username,
+                                 $r->email,
+                                 $r->password,
+                                 $r->user_key,
+                                 $r->active,
+                                 $r->forum_name,
+                                 $r->strava,
+                                 $r->name);
                 break;
             }
 

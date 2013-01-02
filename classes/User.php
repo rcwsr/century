@@ -1,10 +1,6 @@
 <?php
 
 require_once('classes/RideHelper.php');
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  * Description of User
@@ -14,15 +10,30 @@ require_once('classes/RideHelper.php');
 class User {
     private $user_id;
     private $username;
+    private $email;
+    private $password;
+    private $key;
+    private $active;
+    private $forum_name;
+    private $strava;
     private $name;
     private $points;
     
-    public function __construct($user_id, $username, $name) {
+    function __construct($user_id = null, $username = null, $email = null, 
+            $password = null, $key = null, $active = null, $forum_name = null,
+            $strava = null, $name= null) {
         $this->user_id = $user_id;
         $this->username = $username;
+        $this->email = $email;
+        $this->password = $password;
+        $this->key = $key;
+        $this->active = $active;
+        $this->forum_name = $forum_name;
+        $this->strava = $strava;
         $this->name = $name;
         $this->points = $this->points();
     }
+
     public function getUsername() {
         return $this->username;
     }
@@ -56,6 +67,59 @@ class User {
         }
     }
     
+    public function getEmail() {
+        return $this->email;
+    }
+
+    public function setEmail($email) {
+        $this->email = $email;
+    }
+
+    public function getPassword() {
+        return $this->password;
+    }
+
+    public function setPassword($password) {
+        $this->password = $password;
+    }
+
+    public function getKey() {
+        return $this->key;
+    }
+
+    public function setKey($key) {
+        $this->key = $key;
+    }
+
+    public function getActive() {
+        return $this->active;
+    }
+
+    public function setActive($active) {
+        $this->active = $active;
+    }
+    public function isActive(){
+        if($this->active == 1){
+                return true;
+        }
+    }
+    public function getForum_name() {
+        return $this->forum_name;
+    }
+
+    public function setForum_name($forum_name) {
+        $this->forum_name = $forum_name;
+    }
+
+    public function getStrava() {
+        return $this->strava;
+    }
+
+    public function setStrava($strava) {
+        $this->strava = $strava;
+    }
+
+        
     private function points($month = null, $year = null){
         
         $rideHelper = new RideHelper();
@@ -75,7 +139,15 @@ class User {
         
         return $points;
     }
-    
+    public function activate(){
+        $this->active = 1;
+    }
+    public function deactivate(){
+        $this->active = 0;
+    }
+    public function __toString() {
+        return "<br>$this->user_id<br>$this->username<br>$this->password<br>$this->key";
+    }
 
 
 }
