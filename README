@@ -53,3 +53,8 @@ CREATE TABLE `user` (
   `strava` varchar(255) DEFAULT '',
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Add a test user (default password is "foo")
+
+INSERT INTO `user` (`user_id`, `username`, `password`, `roles`, `user_key`, `email`, `name`, `forum_name`, `active`, `strava`)
+VALUES (1,'test','5FZ2Z8QIkA7UTZ4BYkoC+GsReLf569mSKDsfods6LYQ8t+a8EW9oaircfMpmaLbPBh4FOBiiFyLfuZmTSUwzZg==','ROLE_USER',NULL,NULL,'Test Testerson','',0,NULL);
