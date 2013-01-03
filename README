@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `ride` (
   `date_modified` datetime DEFAULT NULL,
   `details` longtext,
   PRIMARY KEY (`ride_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=41 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -38,4 +38,4 @@ CREATE TABLE IF NOT EXISTS `user` (
   `active` tinyint(4) DEFAULT '0',
   `strava` text,
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=11 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
