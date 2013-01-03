@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/classes/UserHelper.php');
+require_once(__DIR__ . '/UserHelper.php');
 /**
  * Description of Registration
  *
