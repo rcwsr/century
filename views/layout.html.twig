@@ -1,23 +1,15 @@
-<?php
-
-
-
-?>
 <!DOCTYPE html>
 <html>
   <head>
     <title>Century Challenge</title>
     <!-- Bootstrap -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="css/bootstrap.css" rel="stylesheet" media="screen">
-    <link href="css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="css/datepicker.css" rel="stylesheet">
+    <link href="/assets/css/bootstrap.css" rel="stylesheet" media="screen">
+    <link href="/assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="/assets/css/datepicker.css" rel="stylesheet">
     <script src="http://code.jquery.com/jquery-latest.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/bootstrap-datepicker.js"></script>
-    <style>
-
-    </style>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/bootstrap-datepicker.js"></script>
   </head>
   <body>
     <header class="navbar navbar-static-top navbar-inverse">
@@ -32,14 +24,14 @@
                  </a>
 
 
-                 <a class="brand" href="index.php">Century Challenge</a>
+                 <a class="brand" href="/">Century Challenge</a>
 
 
                  <div class="nav-collapse collapse">
                      <ul class="nav">
-                           <li><a href="index.php">Home</a></li>
-                           <li><a href="add.php">Add Ride</a></li>
-                           <li><a href="rides.php">Your Rides</a></li>
+                           <li><a href="/">Home</a></li>
+                           <li><a href="/ride/add">Add Ride</a></li>
+                           <li><a href="/rides">Your Rides</a></li>
                      </ul>
                  </div>
 
@@ -48,4 +40,7 @@
      </header>
 
     <div class="container">
-        
+    {% block body %}{% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{% extends "layout.html.twig" %}
+
+{% block body %}
+<div class="row">
+    <div class="span12">
+     <h1>Leader board</h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="span12">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Total</th>
+                    {% for month in months %}
+                    <th>{{ month }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td><a href="#">{{ user.name }}</a></td>
+                    <td>{{ user.points }}</td>
+                    {% for month in months|keys %}
+                    <td>{{ user.getPoints(month, year) }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="span12">
+     <h1>Latest Rides</h1>
+    </div>
+</div>
+{% endblock %}

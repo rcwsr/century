@@ -1,0 +1,4 @@
+db.host: localhost
+db.name: century
+db.username: 
+db.password: 
