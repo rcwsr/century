@@ -15,9 +15,10 @@
 	- Rides
             - Think about handling users that have not submitted a ride in a month
 	- User auth
-            - User login
+		- Consider using OpenID instead of own authentification?	
+		- User login
                 - Merge and minimise auth classes with Century
-            - Admin access
+		- Admin access
         - graphs using Google Charts
 - README
 	- Prettify
