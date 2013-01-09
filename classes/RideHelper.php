@@ -1,8 +1,8 @@
 <?php
 
 
-require_once('Database.php');
-require_once('Ride.php');
+require_once(__DIR__ . '/Database.php');
+require_once(__DIR__ . '/Ride.php');
 
 class RideHelper{
         private $dbc;
@@ -25,7 +25,7 @@ class RideHelper{
                     $ride->getKm(), 
                     $ride->getUrl(),
                     $ride->getPoints(), 
-                    $ride->getDate(),
+                    $ride->getDate()->format('Y-m-d'),
                     $ride->getDetails()
                 ));
             }
@@ -66,7 +66,7 @@ class RideHelper{
                    $ride->setUser_id($r->user_id);
                    $ride->setKm($r->km);
                    $ride->setUrl($r->url);
-                   $ride->setDate($r->date);
+                   $ride->setDate(new \DateTime($r->date));
                    $ride->setDate_added($r->date_added);
                    $ride->setDate_modified($r->date_modified);
                    $ride->setDetails($r->details);   
@@ -96,7 +96,7 @@ class RideHelper{
                    $ride->setUser_id($r->user_id);
                    $ride->setKm($r->km);
                    $ride->setUrl($r->url);
-                   $ride->setDate($r->date);
+                   $ride->setDate(new \DateTime($r->date));
                    $ride->setDate_added($r->date_added);
                    $ride->setDate_modified($r->date_modified);
                    $ride->setDetails($r->details);   
@@ -119,7 +119,7 @@ class RideHelper{
                         $ride->getKm(), 
                         $ride->getUrl(),
                         $ride->getPoints(), 
-                        $ride->getDate(),
+                        $ride->getDate()->format('Y-m-d'),
                         $ride->getDetails(),
                         $ride->getRide_id()
                 ));
