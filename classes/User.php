@@ -1,6 +1,6 @@
 <?php
 
-require_once('classes/RideHelper.php');
+require_once(__DIR__ . '/RideHelper.php');
 
 /**
  * Description of User

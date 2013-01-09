@@ -5,7 +5,17 @@ Please read TODO
 Application aimed to automate the process of collecting and collating century 
 challenge data for LFCC
 
-DB:
+Getting started:
+
+Install composer (http://getcomposer.org/)
+
+    ./composer.phar install
+
+Create the config file:
+
+    cp config/config.default.yml config/config.yml
+
+Create the database schema:
 
 --
 -- Table structure for table `ride`
@@ -30,12 +40,21 @@ CREATE TABLE IF NOT EXISTS `ride` (
 -- Table structure for table `user`
 --
 
-CREATE TABLE IF NOT EXISTS `user` (
+CREATE TABLE `user` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
-  `username` text,
-  `name` text,
-  `forum_name` text,
+  `username` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `roles` varchar(255) DEFAULT NULL,
+  `user_key` varchar(255) DEFAULT NULL,
+  `email` varchar(255) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `forum_name` varchar(100) DEFAULT '',
   `active` tinyint(4) DEFAULT '0',
-  `strava` text,
+  `strava` varchar(255) DEFAULT '',
   PRIMARY KEY (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Add a test user (default password is "foo")
+
+INSERT INTO `user` (`user_id`, `username`, `password`, `roles`, `user_key`, `email`, `name`, `forum_name`, `active`, `strava`)
+VALUES (1,'test','5FZ2Z8QIkA7UTZ4BYkoC+GsReLf569mSKDsfods6LYQ8t+a8EW9oaircfMpmaLbPBh4FOBiiFyLfuZmTSUwzZg==','ROLE_USER',NULL,NULL,'Test Testerson','',0,NULL);
