@@ -38,6 +38,11 @@
 <div class="row">
     <div class="span12">
      <h1>Latest Rides</h1>
+     <ul>
+     {% for ride in rides %}
+     <li>{{ ride }}</li>
+     {% endfor %}
+     </ul>
     </div>
 </div>
 {% endblock %}

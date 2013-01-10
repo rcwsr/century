@@ -15,7 +15,7 @@
         {{ form_widget(form.url) }}
 
         {{ form_label(form.date) }}
-        {{ form_widget(form.date) }}
+         {{ form_widget(form.date, {'attr': {'class': 'datepicker'}}) }}
 
         {{ form_label(form.details) }}
         {{ form_widget(form.details, {'attr': {'class': 'input-xxlarge', 'rows': 8}}) }}
@@ -25,5 +25,12 @@
 
     <button  type="submit" class="btn" name="submit">Submit</button>
     <span class="help-inline">* denotes required field</span>
-</form>
+</form>    
+<script>
+$(function(){
+    $('.datepicker').datepicker({
+        format: 'yyyy-mm-dd'
+    });
+});
+</script>
 {% endblock %}

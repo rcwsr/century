@@ -1,5 +1,6 @@
-<?php
+<?php 
 
+namespace Century\Ride;
 
 class Ride{
     private $ride_id;
@@ -13,13 +14,15 @@ class Ride{
     private $details;
     
 
-    public function newRide($user_id, $km, $url, $date, $details){
-        $this->setUser_id($user_id);
-        $this->setKm($km);
-        $this->setUrl($url);
-        $this->setDate($date);
-        $this->setDetails($details);
-        return $this;
+    public function __construct($ride_id, $user_id, $km, $url, $date, $details){
+        $this->ride_id = $ride_id;
+        $this->user_id = $user_id;
+        $this->km = $km;
+        $this->url = $url;
+        $this->date = $date;
+        $this->details = $details;
+        $this->points = $this->setPoints($km);
+        //$this->points = $points;
     }
    
 
@@ -64,18 +67,18 @@ class Ride{
 
        //For 100km, you get 10 points
        if($km >= 100 && $km < 150)
-            $this->points = 10;
+            return 10;
        //for every 50km over 100km you get a further 5 points
        elseif($km >= 150){
            //take first 100km off to work out additional points
            $km = $km - 100;
            
            //Could instead / 10?
-           $this->points = 10 + floor($km/50) *5; //add
+           return 10 + floor($km/50) *5; //add
        }
        //under 100km you get 0 points.
        else{
-           $this->points = 0;
+           return 0;
        }
     }
   
