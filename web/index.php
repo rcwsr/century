@@ -9,6 +9,7 @@ use Silex\Provider\SecurityServiceProvider;
 use Silex\Provider\TranslationServiceProvider;
 use Silex\Provider\TwigServiceProvider;
 use Knp\Provider\RepositoryServiceProvider;
+use Century\User\UserProvider;
 
 $app = new Silex\Application();
 
