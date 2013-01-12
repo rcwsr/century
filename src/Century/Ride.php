@@ -1,6 +1,6 @@
 <?php 
 
-namespace Century\Ride;
+namespace Century;
 
 class Ride{
     private $ride_id;

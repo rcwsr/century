@@ -1,6 +1,14 @@
 {% extends "layout.html.twig" %}
 
+
+
 {% block body %}
+
+{% if is_granted('IS_AUTHENTICATED_FULLY') %}
+    <p> {{ user.getName() }} </p>
+    <a href="{{ path('add_logout') }}">Logout</a>
+{% endif %}
+
 <form action="#" method="post">
     <fieldset>
         <legend>Enter the details of your ride below</legend>

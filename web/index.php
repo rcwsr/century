@@ -8,13 +8,26 @@ use Silex\Provider\FormServiceProvider;
 use Silex\Provider\SecurityServiceProvider;
 use Silex\Provider\TranslationServiceProvider;
 use Silex\Provider\TwigServiceProvider;
+use Silex\Provider\SessionServiceProvider;
+use Silex\Provider\UrlGeneratorServiceProvider;
 use Knp\Provider\RepositoryServiceProvider;
-use Century\User\UserProvider;
+use Century\Provider\UserProvider;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 $app = new Silex\Application();
 
 $app->register(new ConfigServiceProvider(__DIR__ . '/../config/config.yml'));
 
+$app->register(new Silex\Provider\SessionServiceProvider());
+$app->register(new Silex\Provider\UrlGeneratorServiceProvider());
+$app->register(new FormServiceProvider());
+$app->register(new TranslationServiceProvider(), array(
+    'locale_fallback' => 'en',
+));
+$app->register(new TwigServiceProvider(), array(
+      'twig.path'       => __DIR__ . '/../views',
+));
 $app->register(new DoctrineServiceProvider(), array(
     'db.options' => array(
         'driver' => 'pdo_mysql',
@@ -24,24 +37,32 @@ $app->register(new DoctrineServiceProvider(), array(
         'password' => $app['db.password']
     )
 ));
-
 $app->register(new RepositoryServiceProvider(), array('repository.repositories' => array(
     'rides'      => 'Century\\Repository\\RideRepo',
+    'users'      => 'Century\\Repository\\UserRepo'
 )));
-
-$app->register(new FormServiceProvider());
-
-$app->register(new TranslationServiceProvider(), array(
-    'locale_fallback' => 'en',
+$app->register(new Silex\Provider\SecurityServiceProvider(), array(
+    'security.firewalls' => array( 
+        'add' => array(
+            'pattern' => '^/add',
+            'form' => array('login_path' => '/login', 'check_path' => '/add/login_check'),
+            'logout' => array('logout_path' => '/add/logout'),
+            'users' => $app->share(function() use ($app) {
+                // raw password is foo
+                return new Century\Provider\UserProvider($app['db']);
+            })
+            
+        ),
+    ),
 ));
 
-$app->register(new TwigServiceProvider(), array(
-    'twig.path' => __DIR__ . '/../views'
-));
+
+
 
 $app->get('/', function () use ($app) {
     //Show leaderboard and latest rides
     $rides = $app['rides']->getAllRides();
+    $users = $app['users']->getAllUsers();
 
     $months = array();
     foreach (range(1, (int) date('n')) as $month) {
@@ -49,7 +70,7 @@ $app->get('/', function () use ($app) {
     }
 
     return $app['twig']->render('index.html.twig', array(
-        //'users' => $users,
+        'users' => $users,
         'rides' => $rides,
         'months' => $months,
         'year' => (int) date('Y')
@@ -62,10 +83,14 @@ $app->get('/rides/{$username}', function () use ($app) {
 
 
 $app->match('/add', function () use ($app) {
-    //Add ride, user must be logged in.
-    //otherwise go to login form
 
-    $user_id = rand(1,5);
+    $token = $app['security']->getToken();
+    if (null !== $token) {
+        $user = $token->getUser();
+
+    }   
+    
+    $user_id = $user->getUserId();
 
     $data = array(
        //'date' => new \DateTime()
@@ -95,8 +120,6 @@ $app->match('/add', function () use ($app) {
         if ($form->isValid()) {
             $data = $form->getData();
             
-           
-           
 
             $app['rides']->insert(array(
                 'user_id' =>$user_id,
@@ -114,7 +137,7 @@ $app->match('/add', function () use ($app) {
         }
     }
 
-    return $app['twig']->render('add.html.twig', array('form' => $form->createView()));
+    return $app['twig']->render('add.html.twig', array('form' => $form->createView(), 'user' => $user));
 
 });
 
@@ -125,10 +148,71 @@ $app->get('/ride/{$id}', function () use ($app) {
 
 $app->match('/register', function () use ($app) {
     //User registration
+
+     $form = $app['form.factory']->createBuilder('form')
+        ->add('username', 'text', array(
+            'label' => 'Username',
+            'required' => true
+        ))
+        ->add('name', 'text', array(
+            'label' => 'Full name',
+            'required' => false
+        ))
+        ->add('email', 'text', array(
+            'label' => 'E-mail address',
+            'required' => true
+        ))
+        ->add('password', 'text', array(
+            'label' => 'Password',
+            'required' => true
+        ))
+        ->add('forum_name', 'text', array(
+            'label' => 'LFCC forum username',
+            'required' => true
+        ))
+        ->add('strava', 'text', array(
+            'label' => 'Strava athlete ID',
+            'required' => true
+        ))
+        ->getForm();
+
+    if ($app['request']->getMethod() === 'POST') {
+        $form->bind($app['request']);
+        if ($form->isValid()) {
+            //get form data
+            $data = $form->getData();
+
+            //encode password
+            $password = $app['security.encoder.digest']->encodePassword($data['password'], strtolower($data['username']));
+
+           
+            $app['users']->insert(array(
+                'username' => strtolower($data['username']),
+                'password'       => $password,
+                'roles' => 'ROLE_USER',
+                'email' => $data['email'],
+                'name'       => $data['name'],
+                'forum_name'       => $data['forum_name'],
+                'strava'       => $data['strava']
+            ));
+            
+
+            return $app->redirect('/');
+        }
+    }
+
+    return $app['twig']->render('register.html.twig', array('form' => $form->createView()));
 });
 
-$app->match('/login', function () use ($app) {
-    //login page
+$app->match('/login', function(Request $request) use ($app) {
+    return $app['twig']->render('login.html.twig', array(
+        'error'         => $app['security.last_error']($request),
+        'last_username' => $app['session']->get('_security.last_username'),
+    ));
+});
+
+$app->get('/admin/hi', function () use ($app) {
+    return "test";
 });
 
 $app->error(function (\Exception $e, $code) {

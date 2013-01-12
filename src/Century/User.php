@@ -1,11 +1,13 @@
 <?php
 
-namespace Century\User;
+namespace Century;
 
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class User implements UserInterface
 {
+
+    private $user_id;
     private $username;
     private $password;
     private $salt;
@@ -15,13 +17,14 @@ class User implements UserInterface
     private $name;
     private $forum_name;
     private $strava;
+    private $points;
 
-    public function __construct($username, $password, $salt, array $roles
+    public function __construct($user_id = null, $username, $password, array $roles,
                                 $email, $name, $forum_name, $strava)
     {
+        $this->user_id = $user_id;
         $this->username = $username;
         $this->password = $password;
-        $this->salt = $salt;
         $this->roles = $roles;
 
         $this->email = $email;
@@ -42,7 +45,7 @@ class User implements UserInterface
 
     public function getSalt()
     {
-        return $this->salt;
+        return strtolower($this->username);
     }
 
     public function getUsername()
@@ -87,4 +90,8 @@ class User implements UserInterface
     public function getStrava(){
         return $this->strava;
     }
+    public function getUserId(){
+        return $this->user_id;
+    }
+
 }

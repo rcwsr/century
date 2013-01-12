@@ -3,7 +3,7 @@
 namespace Century\Repository;
 
 use Knp\Repository;
-use Century\Ride\Ride;
+use Century\Ride;
 
 class RideRepo Extends Repository{
 	public function getTableName()
@@ -39,6 +39,10 @@ class RideRepo Extends Repository{
 
     }
     public function getLatest($username = null, $limit = null, $offset = null){
+
+    }
+    public function getPointsPerUser($username, $month = null, $year = null){
+
 
     }
 

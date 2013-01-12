@@ -1,12 +1,13 @@
 <?php
 
-namespace Century\User;
+namespace Century\Provider;
 
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 //use Symfony\Component\Security\Core\User\User;
-use Century\User\User;
+use Century\User;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Doctrine\DBAL\Connection;
 
@@ -21,13 +22,13 @@ class UserProvider implements UserProviderInterface
 
     public function loadUserByUsername($username)
     {
-        $stmt = $this->conn->executeQuery('SELECT * FROM users WHERE username = ?', array(strtolower($username)));
+        $stmt = $this->conn->executeQuery('SELECT * FROM user WHERE username = ?', array(strtolower($username)));
 
         if (!$user = $stmt->fetch()) {
             throw new UsernameNotFoundException(sprintf('Username "%s" does not exist.', $username));
         }
 
-        return new User($user['username'], $user['password'], explode(',', $user['roles']), $user['email'], $user['name'], $user['forum_name'], $user['strava']);
+        return new User($user['user_id'], $user['username'], $user['password'], explode(',', $user['roles']), $user['email'], $user['name'], $user['forum_name'], $user['strava']);
     }
 
     public function refreshUser(UserInterface $user)
