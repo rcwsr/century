@@ -9,7 +9,7 @@ Todo:
 -----
 
 1.  Users
-  * registration
+  * Users need a getPoints($year, $month) method !important
   * ride/{user}
   * add user_id to /add
 2. Leaderboard
