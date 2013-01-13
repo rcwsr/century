@@ -1,6 +1,35 @@
-<form action="{{ path('add_login_check') }}" method="post">
-    {{ error }}
-    <input type="text" name="_username" value="{{ last_username }}" />
-    <input type="password" name="_password" value="" />
-    <input type="submit" />
-</form>
+{% extends "layout.html.twig" %}
+{% block body %}
+
+<div class="row">
+	<div class="span12">
+	<h1>Login</h1>
+		<form action="{{ path('add_login_check') }}" method="post">
+		{{ error }}
+
+		<fieldset>
+		<legend>Enter your login details</legend>
+		<div class="control-group">
+		    <label class="control-label" for="inputEmail">Username</label>
+		    <div class="controls">
+		      <input type="text" id="inputEmail" placeholder="username" name="_username" value="{{ last_username }}">
+		    </div>
+		  </div>
+		  <div class="control-group">
+		    <label class="control-label" for="inputPassword">Password</label>
+		    <div class="controls">
+		      <input type="password" id="inputPassword" placeholder="Password" name="_password" value="">
+		    </div>
+		  </div>
+		</fieldset>
+		  <div class="control-group">
+		    <div class="controls">
+		      <button type="submit" class="btn">Sign in</button>
+		    </div>
+		  </div>
+
+
+		</form>
+	</div>
+</div>
+{% endblock %}

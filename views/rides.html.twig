@@ -7,16 +7,7 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="span12">
-    {% for day in days %}
-        <h2>{{ day.date }}</h2>
-        {% for ride in day.rides %}
-        {{ ride.toString }}<br>
-        {% endfor %}
-    {% endfor %}
-    </div>
-</div>
+{% include "ride_list.html.twig" %}
 
 <div class="row">
     <div class="span12">

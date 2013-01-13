@@ -1,39 +1,39 @@
 {% extends "layout.html.twig" %}
-
-
-
 {% block body %}
 
 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-    <p> {{ user.getName() }} </p>
     <a href="{{ path('add_logout') }}">Logout</a>
 {% endif %}
+<div class="row">
+    <div class="span12">
+        <h1>Add a ride</h1>
+        <form action="#" method="post">
+            <fieldset>
+                <legend>Enter the details of your ride below</legend>
 
-<form action="#" method="post">
-    <fieldset>
-        <legend>Enter the details of your ride below</legend>
+                {{ form_label(form.km) }}
+                <div class="input-append">
+                    {{ form_widget(form.km, {'attr': {'class': 'input-mini'}}) }}
+                    <span class="add-on">km</span>
+                </div>
 
-        {{ form_label(form.km) }}
-        <div class="input-append">
-            {{ form_widget(form.km, {'attr': {'class': 'input-mini'}}) }}
-            <span class="add-on">km</span>
-        </div>
+                {{ form_label(form.url) }}
+                {{ form_widget(form.url) }}
 
-        {{ form_label(form.url) }}
-        {{ form_widget(form.url) }}
+                {{ form_label(form.date) }}
+                 {{ form_widget(form.date, {'attr': {'class': 'datepicker'}}) }}
 
-        {{ form_label(form.date) }}
-         {{ form_widget(form.date, {'attr': {'class': 'datepicker'}}) }}
+                {{ form_label(form.details) }}
+                {{ form_widget(form.details, {'attr': {'class': 'input-xxlarge', 'rows': 8}}) }}
+            </fieldset>
 
-        {{ form_label(form.details) }}
-        {{ form_widget(form.details, {'attr': {'class': 'input-xxlarge', 'rows': 8}}) }}
-    </fieldset>
+            {{ form_rest(form) }}
 
-    {{ form_rest(form) }}
-
-    <button  type="submit" class="btn" name="submit">Submit</button>
-    <span class="help-inline">* denotes required field</span>
-</form>    
+            <button  type="submit" class="btn" name="submit">Submit</button>
+            <span class="help-inline">* denotes required field</span>
+        </form>   
+    </div>
+</div> 
 <script>
 $(function(){
     $('.datepicker').datepicker({

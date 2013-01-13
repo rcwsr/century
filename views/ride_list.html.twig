@@ -1,0 +1,10 @@
+<div class="row">
+    <div class="span12">
+    {% for month in months %}
+        <h2>{{ month.date }}</h2>
+        {% for ride in month.rides %}
+        	{{ ride }}<br>
+        {% endfor %}
+    {% endfor %}
+    </div>
+</div>
