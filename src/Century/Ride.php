@@ -14,7 +14,7 @@ class Ride{
     private $details;
     
 
-    public function __construct($ride_id, $user_id, $km, $url, $date, $details){
+    public function __construct($ride_id, $user_id, $km, $url, \DateTime $date, $details){
         $this->ride_id = $ride_id;
         $this->user_id = $user_id;
         $this->km = $km;
@@ -118,7 +118,7 @@ class Ride{
                 '], User_ID ['.$this->user_id.
                 '], KM ['.$this->km.
                 '], Points ['.$this->points.
-                '], Date ['.date('d-m-Y',strtotime($this->date)).']';
+                '], Date ['.$this->date->format('d-m-Y').']';
         return $str;
     }
 

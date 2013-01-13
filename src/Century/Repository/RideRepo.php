@@ -30,9 +30,11 @@ class RideRepo Extends Repository{
 
         $rides = array();
         foreach($result as $r){
-        	$ride = new Ride($r['ride_id'], $r['user_id'], $r['km'], $r['url'], $r['date'], $r['details']);
+        	$ride = new Ride($r['ride_id'], $r['user_id'], $r['km'], $r['url'], \DateTime::createFromFormat('Y-m-d H:i:s',$r['date']), $r['details']);
        		$rides[] = $ride;
         }
+
+        
         return $rides;
 
 
@@ -41,10 +43,7 @@ class RideRepo Extends Repository{
     public function getLatest($username = null, $limit = null, $offset = null){
 
     }
-    public function getPointsPerUser($username, $month = null, $year = null){
 
-
-    }
 
 
 }

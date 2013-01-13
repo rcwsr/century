@@ -4,29 +4,58 @@ namespace Century\Repository;
 
 use Knp\Repository;
 use Century\User;
+use Century\Ride;
 
 class UserRepo Extends Repository{
 	public function getTableName()
     {
         return 'user';
     }
-    public function getAllUsers($rideRepo = null){
-    	    $sql = 'SELECT * FROM user';
-        	$result = $this->db->fetchAll($sql);
+    public function getAllUsers($sort_by_points = true){
+	    $sql_users = 'SELECT * FROM user';
+    	$result_users = $this->db->fetchAll($sql_users);
         
+        $sql_rides = 'SELECT * FROM ride' ;   
+        $result_rides = $this->db->fetchAll($sql_rides);
+       
 
         $users = array();
-        foreach($result as $r){
-        	$user = new User($r['user_id'], $r['username'], $r['password'], explode(',', $r['roles']), $r['email'], $r['name'], $r['forum_name'], $r['strava']);
+
+        foreach($result_users as $u){
+            $rides = array();
+            foreach($result_rides as $r){
+                if($r['user_id'] == $u['user_id']){
+                    $ride = new Ride($r['ride_id'], $r['user_id'], $r['km'], $r['url'], \DateTime::createFromFormat('Y-m-d H:i:s',$r['date']), $r['details']);
+                    $rides[] = $ride;
+                }
+            }   
+        	$user = new User($u['user_id'], $u['username'], $u['password'], explode(',', $u['roles']), $u['email'], $u['name'], $u['forum_name'], $u['strava'], $rides);
        		$users[] = $user;
         }
+
+        if($sort_by_points){
+            usort($users, function($b, $a){
+                return strcmp($a->getPoints(), $b->getPoints());
+            });
+        }
         return $users;
+    }
 
+    public function getUserByUsername($username){
+        $users = $this->getAllUsers();
 
-
+        $user = null;
+        foreach($users as $u){
+            if($u->getUsername() == $username){
+                $user = $u;
+            }
+        }
+        return $user;
     }
     public function getLatest(){
 
     }
+
+    
 
 }

@@ -64,21 +64,54 @@ $app->get('/', function () use ($app) {
     $rides = $app['rides']->getAllRides();
     $users = $app['users']->getAllUsers();
 
+    $year = (int) date('Y');
     $months = array();
     foreach (range(1, (int) date('n')) as $month) {
-        $months[$month] = date('F', mktime(0, 0, 0, $month));
+         $months[$month] = array(
+            'date' => date('F', mktime(0, 0, 0, $month)),
+           
+            'rides' => $app['rides']->getAllRides(null, $month, $year)
+        );
     }
+
+
 
     return $app['twig']->render('index.html.twig', array(
         'users' => $users,
         'rides' => $rides,
         'months' => $months,
-        'year' => (int) date('Y')
+        'year' => $year
     ));
 });
 
-$app->get('/rides/{$username}', function () use ($app) {
-    //Show Rides
+$app->get('/rides', function () use ($app) {
+ return 'he';
+});
+
+$app->get('/rides/{username}', function ($username) use ($app) {
+    //Show Rides for specific user
+   
+    $user = $app['users']->getUserByUsername($username);
+    
+    if($user == null){
+        throw new \InvalidArgumentException('User does not exist');
+    }
+
+    $months = array();
+    $year = (int) date('Y');
+    foreach (range((int) date('n'), 1) as $month) {
+        $months[$month] = array(
+            'date' => date('F', mktime(0, 0, 0, $month)),
+           
+            'rides' => $user->getRides($month, $year)
+        );
+
+    }
+
+    return $app['twig']->render('rides.html.twig', array(
+        'user' => $user,
+        'months' => $months
+    ));
 });
 
 

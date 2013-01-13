@@ -3,6 +3,7 @@
 namespace Century;
 
 use Symfony\Component\Security\Core\User\UserInterface;
+use Century\Repository\RideRepo;
 
 class User implements UserInterface
 {
@@ -18,9 +19,10 @@ class User implements UserInterface
     private $forum_name;
     private $strava;
     private $points;
+    private $rides;
 
     public function __construct($user_id = null, $username, $password, array $roles,
-                                $email, $name, $forum_name, $strava)
+                                $email, $name, $forum_name, $strava, array $rides)
     {
         $this->user_id = $user_id;
         $this->username = $username;
@@ -31,6 +33,9 @@ class User implements UserInterface
         $this->name = $name;
         $this->forum_name = $forum_name;
         $this->strava = $strava;
+
+        $this->rides = $rides;
+        $this->points = $this->getPoints();
     }
 
     public function getRoles()
@@ -92,6 +97,31 @@ class User implements UserInterface
     }
     public function getUserId(){
         return $this->user_id;
+    }
+    public function getPoints($month = null, $year = null){
+        $points = 0;
+        $rides = $this->getRides($month, $year);
+        foreach($rides as $r){
+            $points = $points + $r->getPoints();
+        }
+        return $points;
+    }
+    public function getRides($month = null, $year = null){
+        $rides = $this->rides;
+        $rides_array = array();
+
+        foreach($rides as $r){
+            if($month != null && $year != null){
+                if($r->getDate()->format('n') == $month && $r->getDate()->format('Y') == $year){
+                    $rides_array[] = $r;
+                }
+            }
+            else{
+                 $rides_array[] = $r;
+            }
+        }
+
+        return $rides_array;
     }
 
 }
