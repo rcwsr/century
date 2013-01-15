@@ -14,6 +14,14 @@ use Knp\Provider\RepositoryServiceProvider;
 use Century\Provider\UserProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Endurance\Strava\StravaClient;
+
+// Do I need these here:
+use Buzz\Browser;
+use Buzz\Message\Form\FormRequest;
+use Buzz\Message\Response;
+use Buzz\Util\Url;
+use Buzz\Client\Curl;
 
 $app = new Silex\Application();
 
@@ -62,7 +70,7 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
 $app->get('/', function () use ($app) {
     //Show leaderboard and latest rides
     $rides = $app['rides']->getAllRides();
-    $users = $app['users']->getAllUsers();
+    $users = $app['users']->getAllUsers(false);
 
     $year = (int) date('Y');
     $months = array();
@@ -114,8 +122,28 @@ $app->get('/rides/{username}', function ($username) use ($app) {
     ));
 });
 
+$app->get('/ride/{ride_id}', function ($ride_id) use ($app) {
+    //Show Rides for specific user
+    $ride = $app['rides']->getRideById($ride_id);
+
+    $user = $app['users']->getUserById($ride->getUserId());
+
+    
+
+    $strava_details = $strava->getRideDetails($ride->getStravaRideId());
+    if($ride == null ){
+        throw new \InvalidArgumentException('Ride does not exist');
+    }
+
+    return $app['twig']->render('ride_single.html.twig', array(
+        'user' => $user,
+        'ride' => $ride,
+        'strava' => $strava_details
+    ));
+});
 
 $app->match('/add', function () use ($app) {
+
 
     $token = $app['security']->getToken();
     if (null !== $token) {
@@ -132,11 +160,15 @@ $app->match('/add', function () use ($app) {
     $form = $app['form.factory']->createBuilder('form', $data)
         ->add('date', 'text', array(
             'label' => 'Date of ride',
-            'required' => true
+            'required' => false
         ))
         ->add('km', 'text', array(
             'label' => 'Distance',
-            'required' => true
+            'required' => false
+        ))
+        ->add('average_speed', 'text', array(
+            'label' => 'Average Speed',
+            'required' => false
         ))
         ->add('url', 'text', array(
             'label' => 'Link to ride',
@@ -146,28 +178,80 @@ $app->match('/add', function () use ($app) {
             'label' => 'Notes',
             'required' => false
         ))
+        ->add('strava_ride_id', 'text', array(
+            'required' => false
+        ))
         ->getForm();
 
     if ($app['request']->getMethod() === 'POST') {
         $form->bind($app['request']);
-        if ($form->isValid()) {
-            $data = $form->getData();
-            
+        
+       
 
-            $app['rides']->insert(array(
-                'user_id' =>$user_id,
-                'km'       => $data['km'],
-                'url' => $data['url'],
-                'date'       => $data['date'],
-                'details'       => $data['details']
-            ));
+        $data = $form->getData();
+
+        
+        $strava_ride_id = $data['strava_ride_id'];
+
+        //First handle if there is a strava id
+        if($strava_ride_id && is_numeric($strava_ride_id)){
+
+            //Fetch strava details.
+            $browser = new Browser(new Curl());
+            $client = new StravaClient($browser);
+            $ride_details = $client->getRideDetails($strava_ride_id);
+
+            //Check retrieved id matches the one submitted.
+            if($ride_details['id'] == $strava_ride_id){
+
+                //convert strava data to how I want it.
+                $km = round($ride_details['ride']['distance'] / 1000, 1);
+                $url = 'http://app.strava.com/activities/'. (string) $ride_details['id'];
+                $date = \DateTime::createFromFormat('Y-m-d\TH:i:s\Z', $ride_details['ride']['start_date_local']);
+                $converted_date = $date->format('Y-m-d');
+                $average_speed = $ride_details['ride']['average_speed'];
+                $strava_ride_id = $ride_details['ride']['ride_id'];
 
 
+                $prepared_data = array('user_id' => $user_id,
+                                     'km' => $km,
+                                     'url' => $url,
+                                     'date' => $converted_date,
+                                     'average_speed' => $average_speed,
+                                     'strava_ride_id' => $strava_ride_id
+                                    );
+                //prepare data to be submitted
+
+            }
+            else{
+                //Throw exception
+            }
+        }
+        //If there isn't a strava id, take the manually entered 
+        elseif($data['km'] && $data['date']){
+            $prepared_data = array('user_id' => $user_id,
+                                     'km' =>  $data['km'],
+                                     'url' =>  $data['url'],
+                                     'date' =>  $data['date'],
+                                     'average_speed' =>  $data['average_speed'],
+                                     'strava_ride_id' =>  $data['strava_ride_id']
+                                    );
+        }
+        //Else, form isn't valid, throw exception
+        else{
+            //Throw exception
+        }
+        
+
+
+
+        
+            $app['rides']->insert($prepared_data);
             //$rideHelper = new RideHelper();
             //$rideHelper->addRide($ride);
 
+            //redirect to users rides.
             return $app->redirect('/');
-        }
     }
 
     return $app['twig']->render('add.html.twig', array('form' => $form->createView(), 'user' => $user));

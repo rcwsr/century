@@ -1,4 +1,10 @@
 {
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/robincawser/StravaClient"
+        }
+    ],
     "require": {
         "silex/silex": "1.0.*",
         "twig/twig": ">=1.8,<2.0-dev",
@@ -12,7 +18,8 @@
         "symfony/security": "2.1.*",
         "symfony/yaml": "2.1.*",
         "igorw/config-service-provider": "*",
-        "knplabs/repository-service-provider": "dev-master"
+        "knplabs/repository-service-provider": "dev-master",
+        "noginn/strava-client": "*"
     },
     "autoload": {
         "psr-0": { "Century": "src/" }

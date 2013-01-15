@@ -25,7 +25,7 @@ class UserRepo Extends Repository{
             $rides = array();
             foreach($result_rides as $r){
                 if($r['user_id'] == $u['user_id']){
-                    $ride = new Ride($r['ride_id'], $r['user_id'], $r['km'], $r['url'], \DateTime::createFromFormat('Y-m-d H:i:s',$r['date']), $r['details']);
+                    $ride = new Ride($r['ride_id'], $r['user_id'], $r['km'], $r['url'], \DateTime::createFromFormat('Y-m-d H:i:s',$r['date']), $r['details'], $r['average_speed'], $r['strava_ride_id']);
                     $rides[] = $ride;
                 }
             }   
@@ -47,6 +47,17 @@ class UserRepo Extends Repository{
         $user = null;
         foreach($users as $u){
             if($u->getUsername() == $username){
+                $user = $u;
+            }
+        }
+        return $user;
+    }
+    public function getUserById($user_id){
+        $users = $this->getAllUsers();
+
+        $user = null;
+        foreach($users as $u){
+            if($u->getUserId() == $user_id){
                 $user = $u;
             }
         }

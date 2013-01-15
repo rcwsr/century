@@ -30,7 +30,16 @@ class RideRepo Extends Repository{
 
         $rides = array();
         foreach($result as $r){
-        	$ride = new Ride($r['ride_id'], $r['user_id'], $r['km'], $r['url'], \DateTime::createFromFormat('Y-m-d H:i:s',$r['date']), $r['details']);
+        	$ride = new Ride($r['ride_id'],
+                             $r['user_id'],
+                             $r['km'], 
+                             $r['url'], 
+                             \DateTime::createFromFormat('Y-m-d H:i:s', $r['date']), 
+                             $r['details'], 
+                             $r['average_speed'],
+                             $r['strava_ride_id']
+                             );
+
        		$rides[] = $ride;
         }
 
@@ -44,6 +53,16 @@ class RideRepo Extends Repository{
 
     }
 
+    public function getRideById($ride_id){
+        $rides = $this->getAllRides();
 
+        $ride = null;
+        foreach($rides as $r){
+            if($r->getRideId() == $ride_id){
+                $ride = $r;
+            }
+        }
+        return $ride;
+    }
 
 }

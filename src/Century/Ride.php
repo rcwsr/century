@@ -2,7 +2,8 @@
 
 namespace Century;
 
-class Ride{
+class Ride
+{
     private $ride_id;
     private $user_id;
     private $km;
@@ -12,9 +13,19 @@ class Ride{
     private $date_added;
     private $date_modified;
     private $details;
+    private $average_speed;
+    private $strava_ride_id;
     
 
-    public function __construct($ride_id, $user_id, $km, $url, \DateTime $date, $details){
+    public function __construct($ride_id, 
+                                $user_id, 
+                                $km, 
+                                $url, 
+                                \DateTime $date, 
+                                $details,
+                                $average_speed,
+                                $strava_ride_id = null)
+    {
         $this->ride_id = $ride_id;
         $this->user_id = $user_id;
         $this->km = $km;
@@ -22,48 +33,60 @@ class Ride{
         $this->date = $date;
         $this->details = $details;
         $this->points = $this->setPoints($km);
+        $this->average_speed = $average_speed;
+        $this->strava_ride_id = $strava_ride_id;
         //$this->points = $points;
     }
    
 
-    public function getRide_id() {
+    public function getRideId() 
+    {
         return $this->ride_id;
     }
 
-    public function setRide_id($ride_id) {
+    public function setRidId($ride_id) 
+    {
         $this->ride_id = $ride_id;
     }
 
-    public function getUser_id() {
+    public function getUserId() 
+    {
         return $this->user_id;
     }
 
-    public function setUser_id($user_id) {
+    public function setUserId($user_id) 
+    {
         $this->user_id = $user_id;
     }
 
-    public function getKm() {
+    public function getKm() 
+    {
         return $this->km;
     }
 
-    public function setKm($km) {
+    public function setKm($km) 
+    {
         $this->km = $km;
         $this->setPoints($km);
     }
 
-    public function getUrl() {
+    public function getUrl() 
+    {
         return $this->url;
     }
 
-    public function setUrl($url) {
+    public function setUrl($url) 
+    {
         $this->url = $url;
     }
 
-    public function getPoints() {
+    public function getPoints() 
+    {
         return $this->points;
     }
 
-    public function setPoints($km) {
+    public function setPoints($km) 
+    {
 
        //For 100km, you get 10 points
        if($km >= 100 && $km < 150)
@@ -82,38 +105,63 @@ class Ride{
        }
     }
   
-    public function getDate() {
+    public function getDate() 
+    {
         return $this->date;
     }
 
-    public function setDate(\DateTime $date) {
+    public function setDate(\DateTime $date)
+    {
         $this->date = $date;
     }
 
-    public function getDate_added() {
+    public function getDate_added() 
+    {
         return $this->date_added;
     }
 
-    public function setDate_added($date_added) {
+    public function setDate_added($date_added) 
+    {
         $this->date_added = $date_added;
     }
     
-    public function getDate_modified() {
+    public function getDate_modified() 
+    {
         return $this->date_modified;
     }
 
-    public function setDate_modified($date_modified) {
+    public function setDate_modified($date_modified) 
+    {
         $this->date_modified = $date_modified;
     }
     
-    public function getDetails() {
+    public function getDetails() 
+    {
         return $this->details;
     }
 
-    public function setDetails($details) {
+    public function setDetails($details) 
+    {
         $this->details = $details;
     }
-    public function __toString() {
+    public function getAverageSpeed()
+    {
+        return $this->average_speed;
+    }
+    public function setAverageSpeed($average_speed)
+    {
+        $this->average_speed = $average_speed;
+    }
+    public function getStravaRideId()
+    {
+        return $this->strava_ride_id;
+    }
+    public function setStravaRideId($strava_ride_id)
+    {
+        $this->strava_ride_id = $strava_ride_id;
+    }
+    public function __toString() 
+    {
         $str = 'Ride_ID ['. $this->ride_id.
                 '], User_ID ['.$this->user_id.
                 '], KM ['.$this->km.
