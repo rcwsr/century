@@ -241,17 +241,7 @@ $app->match('/add', function () use ($app) {
         else{
             //Throw exception
         }
-        
-
-
-
-        
-            $app['rides']->insert($prepared_data);
-            //$rideHelper = new RideHelper();
-            //$rideHelper->addRide($ride);
-
-            //redirect to users rides.
-            return $app->redirect('/');
+        $app['rides']->insert($prepared_data);
     }
 
     return $app['twig']->render('add.html.twig', array('form' => $form->createView(), 'user' => $user));
