@@ -13,8 +13,10 @@ use Silex\Provider\UrlGeneratorServiceProvider;
 use Knp\Provider\RepositoryServiceProvider;
 use Century\Provider\UserProvider;
 use Symfony\Component\HttpFoundation\Request;
+//use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Endurance\Strava\StravaClient;
+
 
 // Do I need these here:
 use Buzz\Browser;
@@ -65,6 +67,7 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
 ));
 
 
+//$app['debug'] = true;
 
 
 $app->get('/', function () use ($app) {
@@ -119,7 +122,8 @@ $app->get('/rides/{username}', function ($username) use ($app) {
 
     return $app['twig']->render('rides.html.twig', array(
         'user' => $user,
-        'months' => $months
+        'months' => $months,
+        'userRepo' => $app['users']
     ));
 });
 
@@ -299,13 +303,13 @@ $app->match('/register', function () use ($app) {
 
            
             $app['users']->insert(array(
-                'username' => strtolower($data['username']),
-                'password'       => $password,
-                'roles' => 'ROLE_USER',
-                'email' => $data['email'],
-                'name'       => $data['name'],
-                'forum_name'       => $data['forum_name'],
-                'strava'       => $data['strava']
+                'username'  => strtolower($data['username']),
+                'password'  => $password,
+                'roles'     => 'ROLE_USER',
+                'email'     => $data['email'],
+                'name'      => $data['name'],
+                'forum_name'=> $data['forum_name'],
+                'strava'    => $data['strava']
             ));
             
 
@@ -323,12 +327,7 @@ $app->match('/login', function(Request $request) use ($app) {
     ));
 });
 
-$app->get('/admin/hi', function () use ($app) {
-    return "test";
-});
 
-$app->error(function (\Exception $e, $code) {
-    throw $e;
-});
+
 
 $app->run();

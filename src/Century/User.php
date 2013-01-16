@@ -95,13 +95,13 @@ class User implements UserInterface
     {
         return $this->name;
     }
-    public function getSurame()
+    public function getSurname()
     {
-        //E.g. Robin C.
         return $this->name;
     }
     public function getPrivateName()
     {
+        //E.g. Robin C.
         return $this->name;
     }
     public function getForumName()
