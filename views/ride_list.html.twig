@@ -1,10 +1,28 @@
 <div class="row">
     <div class="span12">
-    {% for month in months %}
-        <h2>{{ month.date }}</h2>
-        {% for ride in month.rides %}
-        	{{ ride }}<br>
-        {% endfor %}
-    {% endfor %}
+    <ul class="unstyled">
+    	{% for month in months %}
+        <li><h2>{{ month.date }}</h2></li>
+        <li>
+        	<ul class="thumbnails">
+		        {% for ride in month.rides %}
+		        	<li class="span4">
+		        	<div class="unstyled thumbnail">
+		        		{% if ride.getStravaRideId() %}
+		        			
+		        				<a class="pull-right" href="{{ ride.getUrl() }}"><img width="40px" src="/assets/img/strava.jpg" alt="strava logo" /></a>
+		        		{% endif %}
+
+		        		<h4>{{ userRepo.getUserById(ride.getUserId()).getPrivateName() }} got {{ ride.getPoints() }} points</h4>
+		        		<p>for riding {{ ride.getKm(true) }}km on {{ ride.getDate().format('d-m-Y') }}</p>
+		        		
+		        	</div>
+
+		        	</li>
+		        {% endfor %}
+   			</ul>
+   		</li>
+    	{% endfor %}
+    	</ul>	
     </div>
 </div>
