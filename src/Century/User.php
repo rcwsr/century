@@ -83,22 +83,41 @@ class User implements UserInterface
         return true;
     }
 
-    public function getEmail(){
+    public function getEmail()
+    {
         return $this->email;
     }
-    public function getName(){
+    public function getName()
+    {
         return $this->name;
     }
-    public function getForumName(){
+    public function getFirstName()
+    {
+        return $this->name;
+    }
+    public function getSurame()
+    {
+        //E.g. Robin C.
+        return $this->name;
+    }
+    public function getPrivateName()
+    {
+        return $this->name;
+    }
+    public function getForumName()
+    {
         return $this->forum_name;
     }
-    public function getStrava(){
+    public function getStrava()
+    {
         return $this->strava;
     }
-    public function getUserId(){
+    public function getUserId()
+    {
         return $this->user_id;
     }
-    public function getPoints($month = null, $year = null){
+    public function getPoints($month = null, $year = null)
+    {
         $points = 0;
         $rides = $this->getRides($month, $year);
         foreach($rides as $r){
@@ -106,7 +125,8 @@ class User implements UserInterface
         }
         return $points;
     }
-    public function getRides($month = null, $year = null){
+    public function getRides($month = null, $year = null)
+    {
         $rides = $this->rides;
         $rides_array = array();
 

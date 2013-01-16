@@ -59,9 +59,15 @@ class Ride
         $this->user_id = $user_id;
     }
 
-    public function getKm() 
+    public function getKm($round = false) 
     {
-        return $this->km;
+        if($round){
+            return round($this->km);
+        }
+        else{
+            return $this->km;
+        }
+       
     }
 
     public function setKm($km) 
@@ -169,6 +175,7 @@ class Ride
                 '], Date ['.$this->date->format('d-m-Y').']';
         return $str;
     }
+
 
 
 
