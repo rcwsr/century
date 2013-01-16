@@ -88,7 +88,8 @@ $app->get('/', function () use ($app) {
         'users' => $users,
         'rides' => $rides,
         'months' => $months,
-        'year' => $year
+        'year' => $year,
+        'userRepo' => $app['users']
     ));
 });
 
@@ -210,7 +211,7 @@ $app->match('/add', function () use ($app) {
                 $date = \DateTime::createFromFormat('Y-m-d\TH:i:s\Z', $ride_details['ride']['start_date_local']);
                 $converted_date = $date->format('Y-m-d');
                 $average_speed = $ride_details['ride']['average_speed'];
-                $strava_ride_id = $ride_details['ride']['ride_id'];
+                $strava_ride_id = $ride_details['id'];
 
 
                 $prepared_data = array('user_id' => $user_id,
@@ -239,9 +240,13 @@ $app->match('/add', function () use ($app) {
         }
         //Else, form isn't valid, throw exception
         else{
-            //Throw exception
+            
         }
         $app['rides']->insert($prepared_data);
+        return $app['twig']->render('success.html.twig', array('form' => $form->createView(), 
+                                                               'user' => $user, 
+                                                               'message' => 'Your ride was added successfully'
+                                                               ));
     }
 
     return $app['twig']->render('add.html.twig', array('form' => $form->createView(), 'user' => $user));
