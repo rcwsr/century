@@ -12,19 +12,19 @@ class RideRepo Extends Repository{
     }
     public function getAllRides($username = null, $month = null, $year = null){
     	if($username == null && $month == null && $year == null){
-            $sql = 'SELECT * FROM ride ORDER BY date_added desc';
+            $sql = 'SELECT * FROM ride ORDER BY date desc';
        		$result = $this->db->fetchAll($sql);
         }
         elseif($username != null && $month == null && $year == null){
-            $sql = 'SELECT * FROM ride WHERE username = ? ORDER BY date_added desc';
+            $sql = 'SELECT * FROM ride WHERE username = ? ORDER BY date desc';
         	$result = $this->db->fetchAll($sql, array($username));
         }
         elseif($username == null && $month != null && $year != null){
-            $sql = 'SELECT * FROM ride WHERE month(date) = ? AND year(date) = ? ORDER BY date_added desc';
+            $sql = 'SELECT * FROM ride WHERE month(date) = ? AND year(date) = ? ORDER BY date desc';
         	$result = $this->db->fetchAll($sql, array($month, $year));
         }
         elseif($username != null && $month != null && $year != null){
-             $sql = 'SELECT * FROM ride WHERE month(date) = ? AND year(date) = ? AND username = ? ORDER BY date_added desc';
+             $sql = 'SELECT * FROM ride WHERE month(date) = ? AND year(date) = ? AND username = ? ORDER BY date desc';
         	$result = $this->db->fetchAll($sql, array($month, $year, $username));
         }
 
