@@ -5,12 +5,14 @@ namespace Century\Repository;
 use Knp\Repository;
 use Century\Ride;
 
-class RideRepo Extends Repository{
+class RideRepo Extends Repository
+{
 	public function getTableName()
     {
         return 'ride';
     }
-    public function getAllRides($username = null, $month = null, $year = null){
+    public function getAllRides($username = null, $month = null, $year = null)
+    {
     	if($username == null && $month == null && $year == null){
             $sql = 'SELECT * FROM ride ORDER BY date desc';
        		$result = $this->db->fetchAll($sql);
@@ -49,11 +51,13 @@ class RideRepo Extends Repository{
 
 
     }
-    public function getLatest($username = null, $limit = null, $offset = null){
+    public function getLatest($username = null, $limit = null, $offset = null)
+    {
 
     }
 
-    public function getRideById($ride_id){
+    public function getRideById($ride_id)
+    {
         $rides = $this->getAllRides();
 
         $ride = null;

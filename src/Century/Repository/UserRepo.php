@@ -6,12 +6,14 @@ use Knp\Repository;
 use Century\User;
 use Century\Ride;
 
-class UserRepo Extends Repository{
+class UserRepo Extends Repository
+{
 	public function getTableName()
     {
         return 'user';
     }
-    public function getAllUsers($sort_by_points = true){
+    public function getAllUsers($sort_by_points = true)
+    {
 	    $sql_users = 'SELECT * FROM user';
     	$result_users = $this->db->fetchAll($sql_users);
         
@@ -41,7 +43,8 @@ class UserRepo Extends Repository{
         return $users;
     }
 
-    public function getUserByUsername($username){
+    public function getUserByUsername($username)
+    {
         $users = $this->getAllUsers();
 
         $user = null;
@@ -52,7 +55,8 @@ class UserRepo Extends Repository{
         }
         return $user;
     }
-    public function getUserById($user_id){
+    public function getUserById($user_id)
+    {
         $users = $this->getAllUsers();
 
         $user = null;
@@ -63,7 +67,8 @@ class UserRepo Extends Repository{
         }
         return $user;
     }
-    public function getLatest(){
+    public function getLatest()
+    {
 
     }
 
