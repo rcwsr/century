@@ -1,0 +1,68 @@
+{% extends "layout.html.twig" %}
+{% block body %}
+
+<div class="row">
+    <div class="span12">
+        <h1>Add a ride</h1>
+            <div class="row">
+                <div class="span6">
+                    <form action="/add/manual" method="post">
+                        <fieldset>
+                            <legend>Enter the details of your ride below</legend>
+                            {{ form_label(form.km) }}
+                            <div class="input-append">
+                                {{ form_widget(form.km, {'attr': {'class': 'input-mini'}}) }}
+                                <span class="add-on">km</span>
+                            </div>
+                            {{ form_label(form.average_speed) }}
+                            <div class="input-append">
+                                {{ form_widget(form.average_speed, {'attr': {'class': 'input-mini'}}) }}
+                                <span class="add-on">km/h</span>
+                            </div>
+
+                            {{ form_label(form.url) }}
+                            {{ form_widget(form.url) }}
+
+                            {{ form_label(form.date) }}
+                            {{ form_widget(form.date, {'attr': {'class': 'datepicker'}}) }}
+
+                            {{ form_label(form.details) }}
+                            {{ form_widget(form.details, {'attr': {'class': 'input-xlarge', 'rows': 8}}) }}
+                            <div class="clearfix"></div>
+                            <button  type="submit" class="btn" name="submit">Submit Ride</button>
+                        </fieldset>
+                        
+                    </form>
+                </div>
+
+                <div class="span6">
+                    <form action="/add/strava" method="post">
+                        <fieldset class="span6">
+                            <legend>Or, enter your Strava Ride ID</legend>
+                            <div class="input-prepend input-append">
+                                <span class="add-on">http://app.strava.com/activities/</span>
+                                {{ form_widget(form_strava.strava_ride_id, {'attr': {'class': 'input-mini'}}) }}
+                                <button  type="submit" class="btn" name="submit">Go</button>
+                            </div>
+                            {% if errors %}
+                                <div class="alert alert-danger"><strong>{{ errors }}</strong></div>
+                            {% endif %}
+                        </fieldset>
+                    </form> 
+                </div>
+
+            
+            
+        </div>      
+    </div>
+</div> 
+
+
+<script>
+$(function(){
+    $('.datepicker').datepicker({
+        format: 'yyyy-mm-dd'
+    });
+});
+</script>
+{% endblock %}
