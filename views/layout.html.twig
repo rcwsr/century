@@ -31,13 +31,24 @@
                      <ul class="nav">
                            <li><a href="/">Home</a></li>
                            <li><a href="/add">Add Ride</a></li>
-                           <li><a href="/rides">Your Rides</a></li>
+                           <li><a href="/rides">All Rides</a></li>
+                           {% if is_granted('ROLE_USER') %}
+                           <li><a href="/profile/{{ app.security.getToken().getUser().getUsername() }}">Your Rides</a></li>
+                           {% endif %}
                      </ul>
-                        <ul class="nav pull-right">
-                          
+                     {% if is_granted('ROLE_USER') %}
+                      <ul class="nav pull-right">
+                        <li><p class="navbar-text">Hello  {{ app.security.getToken().getUser().getFirstName() }}! ({{ app.security.getToken().getUser().getUsername() }})</p></li>
+                        <li><a href="/logout">Logout</a></li>
 
-                         
-                       </ul>
+                     </ul>
+                     {% else %}
+                      <ul class="nav pull-right">
+                        <li><a href="/login">Login</a></li>                       
+                     </ul>
+
+                     {% endif %}
+
 
                  </div>
                     

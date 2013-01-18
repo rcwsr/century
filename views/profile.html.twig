@@ -1,0 +1,64 @@
+{% extends "layout.html.twig" %}
+
+{% block body %}
+<div class="row">
+    <div class="span12">
+        <h1>
+        {% if is_granted('ROLE_USER') %}
+            {{ user.getName() }}'s Profile
+        {% else %}
+            {{ user.getPrivateName() }}'s Profile
+        {% endif %}
+        </h1>
+    </div>
+</div>
+
+
+
+<div class="row">
+	<div class="span5 offset1">
+		<table class="table table-bordered">
+			<thead>
+				<tr class="info">
+					<th class="center" colspan="3"><h2>{{ "now"|date("F") }}</h2></th>
+				</tr>
+				<tr>
+					<th>Points</th>
+					<th>Distance</th>
+					<th>Century rides</th>
+				</tr>
+			</thead>
+			<tbody>
+				<td>{{ page_data.total_points_month}}</td>
+				<td>{{ page_data.total_km_month}}</td>
+				<td>{{ page_data.centuries_month}}</td>
+			</tbody>
+		</table>
+	</div>
+	<div class="span5 ">
+		<table class="table table-bordered">
+			<thead>
+				<tr class="info">
+					<th class="center" colspan="3"><h2>{{ "now"|date("Y") }}</h2></th>
+				</tr>
+				<tr>
+					<th>Points</th>
+					<th>Distance</th>
+					<th>Century rides</th>
+				</tr>
+			</thead>
+			<tbody>
+				<td>{{ page_data.total_points_year}}</td>
+				<td>{{ page_data.total_km_year}}</td>
+				<td>{{ page_data.centuries_year}}</td>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+
+
+
+<h1>Latest Rides</h1>
+{% include "ride_list.html.twig" %}
+{% endblock %}

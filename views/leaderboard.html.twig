@@ -12,7 +12,14 @@
     <tbody>
         {% for user in users %}
             <tr>
-                <td><a href="rides/{{ user.getUsername() }}">{{ user.getName() }}</a></td>
+                <td><a href="profile/{{ user.getUsername() }}">
+                {% if is_granted('ROLE_USER') %}
+                    {{ user.getName() }}
+                {% else %}
+                    {{ user.getPrivateName() }}
+                {% endif %}
+
+                </a></td>
                 <td>{{ user.getPoints() }}</td>
                 {% for month in months|keys %}
                     <td>{{ user.getPoints(month, year) }}</td>
