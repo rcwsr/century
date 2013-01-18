@@ -83,7 +83,7 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
         ),
 
     ),
-     'security.access_rules' => array(
+    'security.access_rules' => array(
         // You can rename ROLE_USER as you wish
         array('^/add', 'ROLE_USER'),
     )
@@ -124,16 +124,18 @@ $app->get('/', function () use ($app) {
 });
 
 $app->get('/rides', function () use ($app) {
- return 'he';
+    //All Rides
 });
 
-$app->get('/rides/{username}', function ($username) use ($app) {
+$app->get('/profile/{username}', function ($username) use ($app) {
     //Show Rides for specific user
-   
+    
+    $username = $app->escape($username);
+
     $user = $app['users']->getUserByUsername($username);
     
-    if($user == null){
-        throw new \InvalidArgumentException('User does not exist');
+    if(!$user){
+         $app->abort(404, "User $username does not exist");
     }
 
     $months = array();
@@ -145,8 +147,18 @@ $app->get('/rides/{username}', function ($username) use ($app) {
         );
 
     }
-
-    return $app['twig']->render('rides.html.twig', array(
+    $year = (int) date('Y');
+    $month =  (int) date('n');
+    $page_data = array(
+        'total_km_year' => $user->getTotalKm(null, $year),
+        'total_km_month' => $user->getTotalKm($month, $year),
+        'total_points_year' => $user->getTotalPoints(null, $year),
+        'total_points_month' => $user->getTotalPoints($month, $year),
+        'centuries_year' => $user->getNoOfCenturies(null, $year),
+        'centuries_month' => $user->getNoOfCenturies($month, $year),
+        );
+    return $app['twig']->render('profile.html.twig', array(
+        'page_data' => $page_data,
         'user' => $user,
         'months' => $months,
         'userRepo' => $app['users']
@@ -154,10 +166,25 @@ $app->get('/rides/{username}', function ($username) use ($app) {
 });
 
 $app->get('/ride/{ride_id}', function ($ride_id) use ($app) {
+    $ride_id = $app->escape($ride_id);
+
+    $ride = $app['rides']->getRideById($ride_id);
+
+    if(!$ride){
+         $app->abort(404, "Ride #$ride_id does not exist");
+    }
+
+    $user = $app['users']->getUserById($ride->getUserId());
+
+
+    $page_data = array(
+        'user' => $user,
+        'ride' => $ride
+        );
+    return $app['twig']->render('ride_single.html.twig', $page_data);
 });
 
 $app->match('/add', function (Request $request) use ($app) {
-   // if ($app['security']->isGranted('ROLE_USER')) {
         if ($app['request']->getMethod() === 'POST') {
             $return_data = array('return_form_data' => $app['request']->get('return_form_data'),
                                  'errors' => $app['request']->get('errors'),
@@ -171,11 +198,11 @@ $app->match('/add', function (Request $request) use ($app) {
         $form = $app['form.factory']->createBuilder('form', $return_data['return_form_data'])
                 ->add('date', 'text', array(
                     'label' => 'Date of ride',
-                    'required' => false
+                    'required' => true
                 ))
                 ->add('km', 'text', array(
                     'label' => 'Distance',
-                    'required' => false
+                    'required' => true
                 ))
                 ->add('average_speed', 'text', array(
                     'label' => 'Average Speed',
@@ -193,23 +220,17 @@ $app->match('/add', function (Request $request) use ($app) {
 
         $form_strava = $app['form.factory']->createBuilder('form', $return_data['return_form_data'])
                 ->add('strava_ride_id', 'text', array(
-                    'required' => false
+                    'required' => true
                 ))
                 ->getForm();
 
-        return $app['twig']->render('add2.html.twig', array('form' => $form->createView(), 
-                                                            'form_strava' => $form_strava->createView(), 
-                                                            'errors' => $return_data['errors'],
-                                                            'strava_errors' => $return_data['strava_errors'],
-                                                            'return_form_data' => $return_data['return_form_data']
-                                                            ));
-
-        //}
-        //else{
-        //    $url = $request->getUriForPath('/login');
-        //    $subRequest = Request::create($url, 'GET', array(), $request->cookies->all(), array(), $request->server->all());
-         //   return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
-        //}
+        return $app['twig']->render('add2.html.twig', array(
+            'form' => $form->createView(), 
+            'form_strava' => $form_strava->createView(), 
+            'errors' => $return_data['errors'],
+            'strava_errors' => $return_data['strava_errors'],
+            'return_form_data' => $return_data['return_form_data']
+        ));
     
 });
 
@@ -327,6 +348,11 @@ $app->get('/ride/{$id}', function () use ($app) {
     //Show a single ride by its ID
 });
 
+$app->get('/ride/{$id}/edit', function () use ($app) {
+    //Edit a ride. 
+    //Ensure logged in user matches the user id of ride (throw 404 if not?)
+});
+
 $app->match('/register', function () use ($app) {
     //User registration
 
@@ -336,7 +362,7 @@ $app->match('/register', function () use ($app) {
             'required' => true
         ))
         ->add('name', 'text', array(
-            'label' => 'Full name',
+            'label' => 'Full name (first name and surname - this will only be shown to logged in users.)',
             'required' => false
         ))
         ->add('email', 'text', array(
@@ -353,7 +379,7 @@ $app->match('/register', function () use ($app) {
         ))
         ->add('strava', 'text', array(
             'label' => 'Strava athlete ID',
-            'required' => true
+            'required' => false
         ))
         ->getForm();
 

@@ -6021,7 +6021,9 @@ a.badge:hover {
 .pull-left {
   float: left;
 }
-
+.center{
+  text-align:center !important;
+}
 .hide {
   display: none;
 }

@@ -2,14 +2,54 @@
 
 {% block body %}
 <div class="row">
-    <div class="span12">
-        <h1>Ride #{{ ride.getRideId() }} {{ ride.getStravaRideId()}}</h1>
+    <div class="span8">
+        <h1>Ride #{{ ride.getRideId() }}
+        {% if ride.getStravaRideId() %}	
+				<a href="{{ ride.getUrl() }}"><img width="40px" src="/assets/img/strava.jpg" alt="strava logo" /></a>
+		{% endif %}</h1>
     </div>
 </div>
 
 <div class="row">
-    <div class="span12">
-    </div>
+	<div class="span8">
+		<table class="table table-bordered">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Date</th>
+				<th>Distance</th>
+				<th>Average Speed</th>
+				<th>Points</th>
+				<th>Link</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>
+					<a href="profile/{{ user.getUsername() }}">
+		                {% if is_granted('ROLE_USER') %}
+		                    {{ user.getName() }}
+		                {% else %}
+		                    {{ user.getPrivateName() }}
+		                {% endif %}
+	                </a>
+	            </td>
+				<td>{{ ride.getDate().format('d/m/Y') }}</td>
+				<td>{{ ride.getKm() }}km</td>
+				<td>{{ ride.getAverageSpeed() }}</td>
+				<td>{{ ride.getPoints() }}</td>
+				<td>
+					{% if ride.getUrl() %}
+						<a href="{{ ride.getUrl() }}">Click here</a>
+					{% else %}
+						No link provided
+					{% endif %}
+				</td>
+			</tr>
+		</tbody>
+		</table>
+	</div>
 </div>
+
 
 {% endblock %}

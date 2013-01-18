@@ -7,16 +7,25 @@
         	<ul class="thumbnails">
 		        {% for ride in month.rides %}
 		        	<li class="span4">
-		        	<div class="unstyled thumbnail">
-		        		{% if ride.getStravaRideId() %}
-		        			
-		        				<a class="pull-right" href="{{ ride.getUrl() }}"><img width="40px" src="/assets/img/strava.jpg" alt="strava logo" /></a>
-		        		{% endif %}
+		        	
+			        	<div class="unstyled thumbnail">
+			        		{% if ride.getStravaRideId() %}
+			        			
+			        				<a class="pull-right" href="{{ ride.getUrl() }}"><img width="40px" src="/assets/img/strava.jpg" alt="strava logo" /></a>
+			        		{% endif %}
 
-		        		<h4>{{ userRepo.getUserById(ride.getUserId()).getPrivateName() }} got {{ ride.getPoints() }} points</h4>
-		        		<p>for riding {{ ride.getKm(true) }}km on {{ ride.getDate().format('d-m-Y') }}</p>
-		        		
-		        	</div>
+			        		<h4>
+			        		<a href="/profile/{{ userRepo.getUserById(ride.getUserId()).getUsername() }}">
+			        		{% if is_granted('ROLE_USER') %}
+			                    {{ userRepo.getUserById(ride.getUserId()).getName() }}{% else %}
+			                    {{ userRepo.getUserById(ride.getUserId()).getPrivateName() }}{% endif %}</a>
+			                 got {{ ride.getPoints() }} points
+			        		
+
+			        		</h4>
+			        		<p>for riding <a href="/ride/{{ ride.getRideId() }}">{{ ride.getKm(true) }}km on {{ ride.getDate().format('d/m/Y') }}</a></p>
+			        		
+			        	</div>
 
 		        	</li>
 		        {% endfor %}
