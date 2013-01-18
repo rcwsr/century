@@ -9,6 +9,9 @@
                     <form action="/add/manual" method="post">
                         <fieldset>
                             <legend>Enter the details of your ride below</legend>
+                            {% if errors %}
+                                <div class="alert alert-danger"><strong>{{ errors }}</strong></div>
+                            {% endif %}
                             {{ form_label(form.km) }}
                             <div class="input-append">
                                 {{ form_widget(form.km, {'attr': {'class': 'input-mini'}}) }}
@@ -39,14 +42,20 @@
                     <form action="/add/strava" method="post">
                         <fieldset class="span6">
                             <legend>Or, enter your Strava Ride ID</legend>
+
+                            {% if strava_errors %}
+                                <div class="alert alert-danger">
+                                    <strong>{{ strava_errors }}</strong>
+                                </div>
+                            {% endif %}
+
                             <div class="input-prepend input-append">
                                 <span class="add-on">http://app.strava.com/activities/</span>
+                                
                                 {{ form_widget(form_strava.strava_ride_id, {'attr': {'class': 'input-mini'}}) }}
                                 <button  type="submit" class="btn" name="submit">Go</button>
                             </div>
-                            {% if errors %}
-                                <div class="alert alert-danger"><strong>{{ errors }}</strong></div>
-                            {% endif %}
+                            
                         </fieldset>
                     </form> 
                 </div>

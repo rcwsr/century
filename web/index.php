@@ -88,8 +88,6 @@ $app->get('/', function () use ($app) {
         );
     }
 
-
-
     return $app['twig']->render('index.html.twig', array(
         'users' => $users,
         'rides' => $rides,
@@ -116,8 +114,7 @@ $app->get('/rides/{username}', function ($username) use ($app) {
     $year = (int) date('Y');
     foreach (range((int) date('n'), 1) as $month) {
         $months[$month] = array(
-            'date' => date('F', mktime(0, 0, 0, $month)),
-           
+            'date' => date('F', mktime(0, 0, 0, $month)),          
             'rides' => $user->getRides($month, $year)
         );
 
@@ -131,23 +128,6 @@ $app->get('/rides/{username}', function ($username) use ($app) {
 });
 
 $app->get('/ride/{ride_id}', function ($ride_id) use ($app) {
-    //Show Rides for specific user
-    $ride = $app['rides']->getRideById($ride_id);
-
-    $user = $app['users']->getUserById($ride->getUserId());
-
-    
-
-    $strava_details = $strava->getRideDetails($ride->getStravaRideId());
-    if($ride == null ){
-        throw new \InvalidArgumentException('Ride does not exist');
-    }
-
-    return $app['twig']->render('ride_single.html.twig', array(
-        'user' => $user,
-        'ride' => $ride,
-        'strava' => $strava_details
-    ));
 });
 
 $app->match('/add', function () use ($app) {
@@ -155,14 +135,15 @@ $app->match('/add', function () use ($app) {
 
     if ($app['request']->getMethod() === 'POST') {
         $return_data = array('return_form_data' => $app['request']->get('return_form_data'),
-                             'errors' => $app['request']->get('errors')
+                             'errors' => $app['request']->get('errors'),
+                             'strava_errors' => $app['request']->get('strava_errors')
                              );
     }
     else{
         $return_data = null;
     }
 
-    $form = $app['form.factory']->createBuilder('form')
+    $form = $app['form.factory']->createBuilder('form', $return_data['return_form_data'])
             ->add('date', 'text', array(
                 'label' => 'Date of ride',
                 'required' => false
@@ -194,61 +175,114 @@ $app->match('/add', function () use ($app) {
     return $app['twig']->render('add2.html.twig', array('form' => $form->createView(), 
                                                         'form_strava' => $form_strava->createView(), 
                                                         'errors' => $return_data['errors'],
+                                                        'strava_errors' => $return_data['strava_errors'],
                                                         'return_form_data' => $return_data['return_form_data']
                                                         ));
 
 });
 
-$app->post('/add/manual', function () use ($app) {
+$app->post('/add/manual', function (Request $request) use ($app) {
+    $token = $app['security']->getToken();
+    if (null !== $token) {
+        $user = $token->getUser();
+    }
+    $user_id = $user->getUserId();
 
+    $data = $request->get('form');
+    $constraint = new Assert\Collection(array(
+                        'date' => array(new Assert\Date(), new Assert\NotBlank()),
+                        'km' => array(new Assert\Regex(array('pattern' => '(0|[1-9][0-9]*)')),new Assert\NotBlank()),
+                        'average_speed' => array(new Assert\Regex(array('pattern' => '(0|[1-9][0-9]*)')))
+                        ));
+    $validation_data = array(
+        'date' => $data['date'],
+        'km' => $data['km'],
+        'average_speed' => $data['average_speed']
+    );
+    $errors = $app['validator']->validateValue($validation_data, $constraint);
+    
+   
+    if (count($errors) > 0) {
+        $return_data = array(
+            'return_form_data' => $data,
+            'errors' => $errors,
+            'strava_errors' => null
+        );
+        $subRequest = Request::create('/add', 'POST', $return_data);
+        return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+    }
+    else {
+        $prepared_data = array(
+                'user_id' => $user_id,
+                'km' => $data['km'],
+                'url' => $data['url'],
+                'date' => $data['date'],
+                'average_speed' => $data['average_speed'],
+                'strava_ride_id' => null
+            );
+        $app['rides']->insert($prepared_data);
+        return $app['twig']->render('success.html.twig', array('message' => 'Your ride was added successfully'));
+    }
    
 });
 
 $app->post('/add/strava', function (Request $request) use ($app) {
     
+    //Get Logged in user_id
     $token = $app['security']->getToken();
     if (null !== $token) {
         $user = $token->getUser();
-
     }
     $user_id = $user->getUserId();
 
+    //Fetch form data to be submitted.
     $data = $request->get('form');
-    $errors = $app['validator']->validateValue($data['strava_ride_id'], new Assert\MinLength(8));
-   
+
+    //Validation
+    $constraint = new Assert\Collection(array(
+        'strava_ride_id' => array(new Assert\NotBlank(), new Assert\MinLength(8))));
+    $validation_data = array(
+        'strava_ride_id' => $data['strava_ride_id']
+        );
+    //Get any errors
+    $errors = $app['validator']->validateValue($validation_data, $constraint);
+    
     if (count($errors) > 0) {
+        //If there are errors, send user back to the add form with errors.
+        
+        //Array to be returned back to /add form
         $return_data = array(
             'return_form_data' => $data,
-            'errors' => $errors
+            'strava_errors' => $errors,
+            'errors' => null
         );
         $subRequest = Request::create('/add', 'POST', $return_data);
-        return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
-        
+        return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST);  
     }
     else {
+        //If no errors, prepare strava data for submission
         $browser = new Browser(new Curl());
         $client = new StravaClient($browser);
         $ride_details = $client->getRideDetails($data['strava_ride_id']);
 
-        
+        //Check if a strava activity could be fetched
         if(isset($ride_details['ride']['id'])){
-            $km = round($ride_details['ride']['distance'] / 1000, 1);
-            $url = 'http://app.strava.com/activities/'. (string) $ride_details['id'];
-            $date = \DateTime::createFromFormat('Y-m-d\TH:i:s\Z', $ride_details['ride']['start_date_local']);
-            $converted_date = $date->format('Y-m-d');
-            $average_speed = $ride_details['ride']['average_speed'];
-            $strava_ride_id = $ride_details['id'];
+            //This should probably not be in the controller.
 
+            //Convert date to database compatible date
+            $date = \DateTime::createFromFormat('Y-m-d\TH:i:s\Z', $ride_details['ride']['start_date_local']);
+            //prepare an array of data to be submitted
             $prepared_data = array('user_id' => $user_id,
-                                   'km' => $km,
-                                   'url' => $url,
-                                   'date' => $converted_date,
-                                   'average_speed' => $average_speed,
-                                   'strava_ride_id' => $strava_ride_id
+                                   'km' => round($ride_details['ride']['distance'] / 1000, 1),
+                                   'url' => 'http://app.strava.com/activities/'. (string) $ride_details['id'],
+                                   'date' => $date->format('Y-m-d'),
+                                   'average_speed' => $ride_details['ride']['average_speed'],
+                                   'strava_ride_id' => $ride_details['id'],
                                     );
+            //Insert array to db.
             $app['rides']->insert($prepared_data);
-            return $app['twig']->render('success.html.twig', array('message' => 'Your ride was added successfully'
-                                                               ));
+            //Send user to success page
+            return $app['twig']->render('success.html.twig', array('message' => 'Your ride was added successfully'));
         }
         else{
             throw new \InvalidArgumentException('The ride ID is invalid');
