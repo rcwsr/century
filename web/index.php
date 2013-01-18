@@ -344,9 +344,6 @@ $app->post('/add/strava', function (Request $request) use ($app) {
 
 });
 
-$app->get('/ride/{$id}', function () use ($app) {
-    //Show a single ride by its ID
-});
 
 $app->get('/ride/{$id}/edit', function () use ($app) {
     //Edit a ride. 
@@ -355,7 +352,10 @@ $app->get('/ride/{$id}/edit', function () use ($app) {
 
 $app->match('/register', function () use ($app) {
     //User registration
-
+    //Needs validation
+    //Make sure username does not exist.
+    //Validate email maybe
+    //password confirmation
      $form = $app['form.factory']->createBuilder('form')
         ->add('username', 'text', array(
             'label' => 'Username',

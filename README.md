@@ -28,7 +28,8 @@ Create the config file:
 Create the database schema and test data:
 
 
-<pre>CREATE TABLE `ride` (
+<pre>
+CREATE TABLE `ride` (
   `ride_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
   `km` decimal(10,1) DEFAULT NULL,
@@ -54,7 +55,8 @@ CREATE TABLE `user` (
   `forum_name` varchar(100) DEFAULT '',
   `active` tinyint(4) DEFAULT '0',
   `strava` varchar(255) DEFAULT '',
-  PRIMARY KEY (`user_id`)
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `username` (`username`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 </pre>
