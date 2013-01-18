@@ -54,7 +54,7 @@ $app->register(new RepositoryServiceProvider(), array('repository.repositories' 
     'rides'      => 'Century\\Repository\\RideRepo',
     'users'      => 'Century\\Repository\\UserRepo'
 )));
-$app->register(new Silex\Provider\SecurityServiceProvider(), array(
+/*$app->register(new Silex\Provider\SecurityServiceProvider(), array(
     'security.firewalls' => array( 
         'add' => array(
             'pattern' => '^/add',
@@ -67,11 +67,37 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
             
         ),
     ),
+));*/
+
+$app->register(new Silex\Provider\SecurityServiceProvider(), array(
+    'security.firewalls' => array( 
+        'default' => array(
+            'pattern' => '^.*$',
+            'anonymous' => true,
+            'form' => array('login_path' => '/login', 'check_path' => '/login_check'),
+            'logout' => array('logout_path' => '/logout'),
+            'users' => $app->share(function() use ($app) {
+                // raw password is foo
+                return new Century\Provider\UserProvider($app['db']);
+            })
+        ),
+
+    ),
+     'security.access_rules' => array(
+        // You can rename ROLE_USER as you wish
+        array('^/add', 'ROLE_USER'),
+    )
 ));
 
 
 $app['debug'] = true;
 
+$app->match('/login', function(Request $request) use ($app) {
+    return $app['twig']->render('login.html.twig', array(
+        'error'         => $app['security.last_error']($request),
+        'last_username' => $app['session']->get('_security.last_username'),
+    ));
+});
 
 $app->get('/', function () use ($app) {
     //Show leaderboard and latest rides
@@ -130,55 +156,61 @@ $app->get('/rides/{username}', function ($username) use ($app) {
 $app->get('/ride/{ride_id}', function ($ride_id) use ($app) {
 });
 
-$app->match('/add', function () use ($app) {
+$app->match('/add', function (Request $request) use ($app) {
+   // if ($app['security']->isGranted('ROLE_USER')) {
+        if ($app['request']->getMethod() === 'POST') {
+            $return_data = array('return_form_data' => $app['request']->get('return_form_data'),
+                                 'errors' => $app['request']->get('errors'),
+                                 'strava_errors' => $app['request']->get('strava_errors')
+                                 );
+        }
+        else{
+            $return_data = null;
+        }
+
+        $form = $app['form.factory']->createBuilder('form', $return_data['return_form_data'])
+                ->add('date', 'text', array(
+                    'label' => 'Date of ride',
+                    'required' => false
+                ))
+                ->add('km', 'text', array(
+                    'label' => 'Distance',
+                    'required' => false
+                ))
+                ->add('average_speed', 'text', array(
+                    'label' => 'Average Speed',
+                    'required' => false
+                ))
+                ->add('url', 'text', array(
+                    'label' => 'Link to ride',
+                    'required' => false
+                ))
+                ->add('details', 'textarea', array(
+                    'label' => 'Notes',
+                    'required' => false
+                ))
+                ->getForm();
+
+        $form_strava = $app['form.factory']->createBuilder('form', $return_data['return_form_data'])
+                ->add('strava_ride_id', 'text', array(
+                    'required' => false
+                ))
+                ->getForm();
+
+        return $app['twig']->render('add2.html.twig', array('form' => $form->createView(), 
+                                                            'form_strava' => $form_strava->createView(), 
+                                                            'errors' => $return_data['errors'],
+                                                            'strava_errors' => $return_data['strava_errors'],
+                                                            'return_form_data' => $return_data['return_form_data']
+                                                            ));
+
+        //}
+        //else{
+        //    $url = $request->getUriForPath('/login');
+        //    $subRequest = Request::create($url, 'GET', array(), $request->cookies->all(), array(), $request->server->all());
+         //   return $app->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+        //}
     
-
-    if ($app['request']->getMethod() === 'POST') {
-        $return_data = array('return_form_data' => $app['request']->get('return_form_data'),
-                             'errors' => $app['request']->get('errors'),
-                             'strava_errors' => $app['request']->get('strava_errors')
-                             );
-    }
-    else{
-        $return_data = null;
-    }
-
-    $form = $app['form.factory']->createBuilder('form', $return_data['return_form_data'])
-            ->add('date', 'text', array(
-                'label' => 'Date of ride',
-                'required' => false
-            ))
-            ->add('km', 'text', array(
-                'label' => 'Distance',
-                'required' => false
-            ))
-            ->add('average_speed', 'text', array(
-                'label' => 'Average Speed',
-                'required' => false
-            ))
-            ->add('url', 'text', array(
-                'label' => 'Link to ride',
-                'required' => false
-            ))
-            ->add('details', 'textarea', array(
-                'label' => 'Notes',
-                'required' => false
-            ))
-            ->getForm();
-
-    $form_strava = $app['form.factory']->createBuilder('form', $return_data['return_form_data'])
-            ->add('strava_ride_id', 'text', array(
-                'required' => false
-            ))
-            ->getForm();
-
-    return $app['twig']->render('add2.html.twig', array('form' => $form->createView(), 
-                                                        'form_strava' => $form_strava->createView(), 
-                                                        'errors' => $return_data['errors'],
-                                                        'strava_errors' => $return_data['strava_errors'],
-                                                        'return_form_data' => $return_data['return_form_data']
-                                                        ));
-
 });
 
 $app->post('/add/manual', function (Request $request) use ($app) {
@@ -353,12 +385,7 @@ $app->match('/register', function () use ($app) {
     return $app['twig']->render('register.html.twig', array('form' => $form->createView()));
 });
 
-$app->match('/login', function(Request $request) use ($app) {
-    return $app['twig']->render('login.html.twig', array(
-        'error'         => $app['security.last_error']($request),
-        'last_username' => $app['session']->get('_security.last_username'),
-    ));
-});
+
 
 
 
