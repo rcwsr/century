@@ -93,16 +93,26 @@ class User implements UserInterface
     }
     public function getFirstName()
     {
-        return $this->name;
+        $names = explode(' ', $this->name);
+        $firstname = array_shift(array_values($names));
+        if($firstname == '' || !$firstname)
+            return $this->username;
+        else
+            return $firstname;
     }
     public function getSurname()
     {
-        return $this->name;
+        $names = explode(' ', $this->name);
+        $surname = end($names);
+
+        if($surname == '' || !$surname)
+            return $this->username;
+        else
+            return $surname;
     }
     public function getPrivateName()
     {
-        //E.g. Robin C.
-        return $this->name;
+       return $this->getFirstName().' '.substr($this->getSurname(), 0, 1).'.';
     }
     public function getForumName()
     {
@@ -142,6 +152,40 @@ class User implements UserInterface
         }
 
         return $rides_array;
+    }
+    public function getTotalPoints($month = null, $year = null)
+    {
+        $rides = $this->getRides($month, $year);
+
+        $points = 0;
+        foreach($rides as $r){
+            $points += $r->getPoints();
+        }
+        return $points;
+    }
+    public function getTotalKm($month = null, $year = null)
+    {
+        $rides = $this->getRides($month, $year);
+
+        $km = 0;
+        foreach($rides as $r){
+            $km += $r->getKm();
+        }
+        return $km;
+    }
+    public function getNoOfCenturies($month = null, $year = null)
+    {
+        $rides = $this->getRides($month, $year);
+
+        $centuries = 0;
+
+        foreach($rides as $r){
+            if($r->getKm() > 99){
+                $centuries++;
+            }
+        }
+
+        return $centuries;
     }
 
 }
