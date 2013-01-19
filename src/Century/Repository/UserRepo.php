@@ -35,10 +35,18 @@ class UserRepo Extends Repository
        		$users[] = $user;
         }
 
-        if($sort_by_points){
+        /*if($sort_by_points){
             usort($users, function($b, $a){
                 return strcmp($a->getPoints(), $b->getPoints());
             });
+        }*/
+        if($sort_by_points){
+            $points = array();
+            foreach ($users as $key => $row)
+            {
+                $points[$key] = $row->getPoints();
+            }
+            array_multisort($points, SORT_DESC, $users);
         }
         return $users;
     }
@@ -71,7 +79,6 @@ class UserRepo Extends Repository
     {
 
     }
-
     
 
 }
