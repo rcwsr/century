@@ -9,21 +9,26 @@
 
 <div class="row">
     <div class="span12">
-        <form action="#" method="post">
+        <form action="" method="post">
+            {% if errors %}
+                <div class="alert alert-danger"><strong>{{ errors }} {{ username_error }}</strong></div>
+            {% endif %}
+            
+           
             <fieldset>
                 <legend>Enter your details below</legend>
-
+                {% autoescape %}
                 {{ form_label(form.username) }}
                 {{ form_widget(form.username) }}
-
-                {{ form_label(form.name) }}
-                {{ form_widget(form.name) }}
 
                 {{ form_label(form.email) }}
                 {{ form_widget(form.email) }}
 
+                {{ form_label(form.name) }}
+                {{ form_widget(form.name) }}
+     
                 {{ form_label(form.password) }}
-                {{ form_widget(form.password) }}
+                {{ form_widget(form.password, {'attr': {'autocomplete': 'off'}}) }}
 
                 {{ form_label(form.forum_name) }}
                 {{ form_widget(form.forum_name) }}
@@ -33,11 +38,12 @@
                      <span class="add-on">http://app.strava.com/athletes/</span>
                      {{ form_widget(form.strava, {'attr': {'class': 'input-mini'}}) }}
                 </div>
+                {% endautoescape %}
             </fieldset>
 
-            {{ form_rest(form) }}
+            
 
-            <button  type="submit" class="btn" name="submit">Register</button>
+            <button  type="submit" class="btn btn-success" name="submit">Register</button>
             <span class="help-inline">* denotes required field</span>
         </form>
     </div>
