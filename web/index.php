@@ -88,7 +88,7 @@ $app['user_registration.controller'] = $app->share(function() use ($app) {
 });
 
 
-$app['debug'] = false;
+$app['debug'] = true;
 
 /**
  Controllers: 
