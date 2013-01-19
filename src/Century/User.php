@@ -187,5 +187,9 @@ class User implements UserInterface
 
         return $centuries;
     }
+    public function getRank()
+    {
+        
+    }
 
 }

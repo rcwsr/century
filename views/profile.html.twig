@@ -5,9 +5,9 @@
     <div class="span12">
         <h1>
         {% if is_granted('ROLE_USER') %}
-            {{ user.getName() }}'s Profile
+            {{ user.getName() }}
         {% else %}
-            {{ user.getPrivateName() }}'s Profile
+            {{ user.getPrivateName() }}
         {% endif %}
         </h1>
     </div>

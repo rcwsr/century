@@ -5,8 +5,16 @@
     <div class="span8">
         <h1>Ride #{{ ride.getRideId() }}
         {% if ride.getStravaRideId() %}	
-				<a href="{{ ride.getUrl() }}"><img width="40px" src="/assets/img/strava.jpg" alt="strava logo" /></a>
+				<a href="{{ ride.getUrl() }}"><img width="100px" src="/assets/img/strava.jpg" alt="strava logo" /></a>
 		{% endif %}</h1>
+		{% if is_granted('ROLE_USER') %}
+		{% if app.security.getToken().getUser().getUserId() == ride.getUserId() %}
+    		<ul class="inline">
+    			<li style="padding-right:0;"><a title="Edit Ride" class="btn btn-small btn-warning" href="/ride/{{ ride.getRideId() }}/edit"><i class="icon-pencil icon-white"></i> Edit</a></li>
+    			<li style="padding-left:0; padding-right:0;" ><a title="Delete Ride" class="btn btn-small btn-danger" href="/ride/{{ ride.getRideId() }}/delete"><i class="icon-trash icon-white"></i> Delete</a></li>
+    		</ul>
+		{% endif %}
+	{% endif %}
     </div>
 </div>
 
@@ -26,7 +34,7 @@
 		<tbody>
 			<tr>
 				<td>
-					<a href="profile/{{ user.getUsername() }}">
+					<a href="/profile/{{ user.getUsername() }}">
 		                {% if is_granted('ROLE_USER') %}
 		                    {{ user.getName() }}
 		                {% else %}
@@ -45,6 +53,14 @@
 						No link provided
 					{% endif %}
 				</td>
+				{% if ride.getDetails() %}
+				<tr>
+					<td class="center" colspan="6">Notes</td>
+				</tr>
+				<tr>
+					<td class="center" colspan="6">{{ ride.getDetails() }}</td>
+				</tr>
+				{% endif %}
 			</tr>
 		</tbody>
 		</table>

@@ -8,7 +8,7 @@
 		        {% for ride in month.rides %}
 		        	<li class="span4">
 		        	
-			        	<div class="unstyled thumbnail">
+			        	<div style="height:90px;" class="thumbnail">
 			        		{% if ride.getStravaRideId() %}
 			        			
 			        				<a class="pull-right" href="{{ ride.getUrl() }}"><img width="40px" src="/assets/img/strava.jpg" alt="strava logo" /></a>
@@ -24,7 +24,16 @@
 
 			        		</h4>
 			        		<p>for riding <a href="/ride/{{ ride.getRideId() }}">{{ ride.getKm(true) }}km on {{ ride.getDate().format('d/m/Y') }}</a></p>
-			        		
+			        		{% if is_granted('ROLE_USER') %}
+			        			{% if app.security.getToken().getUser().getUserId() == ride.getUserId() %}
+					        		<ul class="inline  pull-right">
+					        			<li style="padding-right:0;"><a title="Edit Ride" class="btn btn-mini btn-warning" href="/ride/{{ ride.getRideId() }}/edit"><i class="icon-pencil icon-white"></i></a></li>
+					        			<li style="padding-left:0; padding-right:0;" ><a title="Delete Ride" class="btn btn-mini btn-danger" href="/ride/{{ ride.getRideId() }}/delete"><i class="icon-trash icon-white"></i></a></li>
+					        		</ul>
+			        			{% endif %}
+			        		{% endif %}
+
+			        		<div class="clearfix"></div>
 			        	</div>
 
 		        	</li>
