@@ -191,5 +191,20 @@ class User implements UserInterface
     {
         
     }
+    public function isDisqualified(){
+
+        $months = array();
+        $year = (int) date('Y');
+        foreach (range(1, (int) date('n')) as $month) {
+            $months[] = array('month' => $month, 'points' => $this->getTotalPoints($month, $year));  
+        }
+       
+        foreach($months as $month){
+            if($month['month'] != (int) date('n')){
+                if($month['points'] < 10)
+                    return true;
+            }
+        }
+    }
 
 }

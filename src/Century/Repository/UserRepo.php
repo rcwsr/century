@@ -12,7 +12,7 @@ class UserRepo Extends Repository
     {
         return 'user';
     }
-    public function getAllUsers($sort_by_points = true)
+    public function getAllUsers($sort_by_points = true, $disqualified = false)
     {
 	    $sql_users = 'SELECT * FROM user';
     	$result_users = $this->db->fetchAll($sql_users);
@@ -40,6 +40,15 @@ class UserRepo Extends Repository
                 return strcmp($a->getPoints(), $b->getPoints());
             });
         }*/
+        if($disqualified){
+            $allowed_users = array();
+            foreach($users as $user){
+                if(!$user->isDisqualified())
+                    $allowed_users[] = $user;
+            }
+            $users = $allowed_users;
+        }
+
         if($sort_by_points){
             $points = array();
             foreach ($users as $key => $row)
@@ -79,6 +88,15 @@ class UserRepo Extends Repository
     {
 
     }
-    
+    public function getDisqualifiedUsers(){
+       $users =  $this->getAllUsers(true);
+       $disqualified_users = array();
+       foreach($users as $u){
+            if($u->isDisqualified())
+                $disqualified_users[] = $u;
+       }
+
+       return $disqualified_users;
+    }
 
 }

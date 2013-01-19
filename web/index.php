@@ -110,10 +110,11 @@ $app->match('/register', "user_registration.controller:register");
 $app->get('/', function () use ($app) {
     //Show leaderboard and latest rides
     $rides = $app['rides']->getAllRides();
-    $users = $app['users']->getAllUsers(true);
+    $users = $app['users']->getAllUsers(true, true);
 
     $year = (int) date('Y');
     $months = array();
+    
     foreach (range(1, (int) date('n')) as $month) {
          $months[$month] = array(
             'date' => date('F', mktime(0, 0, 0, $month)),
@@ -121,8 +122,13 @@ $app->get('/', function () use ($app) {
             'rides' => $app['rides']->getAllRides(null, $month, $year)
         );
     }
+    
+    $disqualified_users = $app['users']-> getDisqualifiedUsers();
+
+
 
     return $app['twig']->render('index.html.twig', array(
+        'disqualified_users' => $disqualified_users,
         'users' => $users,
         'rides' => $rides,
         'months' => $months,
@@ -167,7 +173,6 @@ $app->get('/profile/{username}', function ($username) use ($app) {
             'date' => date('F', mktime(0, 0, 0, $month)),          
             'rides' => $app['rides']->getAllRides($user->getUserId(), $month, $year)
         );
-
     }
     $year = (int) date('Y');
     $month =  (int) date('n');
