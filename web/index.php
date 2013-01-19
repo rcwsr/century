@@ -88,7 +88,7 @@ $app['user_registration.controller'] = $app->share(function() use ($app) {
 });
 
 
-$app['debug'] = true;
+$app['debug'] = false;
 
 /**
  Controllers: 
@@ -122,7 +122,7 @@ $app->get('/', function () use ($app) {
             'rides' => $app['rides']->getAllRides(null, $month, $year)
         );
     }
-    
+
     $disqualified_users = $app['users']-> getDisqualifiedUsers();
 
 
@@ -210,14 +210,5 @@ $app->get('/ride/{ride_id}', function ($ride_id) use ($app) {
         );
     return $app['twig']->render('ride_single.html.twig', $page_data);
 });
-
-
-
-
-
-
-
-
-
 
 $app->run();

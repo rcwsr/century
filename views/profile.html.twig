@@ -2,15 +2,35 @@
 
 {% block body %}
 <div class="row">
-    <div class="span12">
+    <div class="span4">
         <h1>
         {% if is_granted('ROLE_USER') %}
             {{ user.getName() }}
         {% else %}
             {{ user.getPrivateName() }}
         {% endif %}
+		
+        {% if user.isDisqualified() %}
+        <em>Disqualified</em>
+        {% endif %}
         </h1>
-    </div>
+	</div>
+	<div class="span4 pull-right">
+        {% if is_granted('ROLE_USER') %}
+	        {% if (user.getForumName()) or (user.getStrava()) %}
+	        <p class="pull-right">Find {{ user.getFirstName() }} on
+		        {% if user.getForumName() %}
+		        	<a href="http://www.leicesterforest.org.uk/forum/memberlist.php?mode=viewprofile&un={{ user.getForumName()}}"><img src="/assets/img/lfcc_logo.png" width="50px"/></a>
+		        {% endif %}
+
+		        {% if user.getStrava() %}
+					 <a href="http://app.strava.com/athletes/{{ user.getStrava()}}"><img src="/assets/img/strava.jpg" width="80px"/></a>
+		        {% endif %}
+		    </p>
+		    {% endif %}
+	    {% endif %}
+       </div>
+    
 </div>
 
 
