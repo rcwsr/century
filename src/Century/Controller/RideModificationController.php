@@ -161,7 +161,7 @@ class RideModificationController
 	                                   'km' => round($ride_details['ride']['distance'] / 1000, 1),
 	                                   'url' => 'http://app.strava.com/activities/'. (string) $ride_details['id'],
 	                                   'date' => $date->format('Y-m-d'),
-	                                   'average_speed' => $ride_details['ride']['average_speed'],
+	                                   'average_speed' => $ride_details['ride']['average_speed'] * 3.6, // Convert from m/s to km/h
 	                                   'strava_ride_id' => $ride_details['id'],
 	                                    );
 	            //Insert array to db.
