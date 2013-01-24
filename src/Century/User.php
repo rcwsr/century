@@ -20,9 +20,10 @@ class User implements UserInterface
     private $strava;
     private $points;
     private $rides;
+    private $metric;
 
     public function __construct($user_id = null, $username, $password, array $roles,
-                                $email, $name, $forum_name, $strava, array $rides)
+                                $email, $name, $forum_name, $strava, array $rides, $metric = true)
     {
         $this->user_id = $user_id;
         $this->username = $username;
@@ -35,6 +36,7 @@ class User implements UserInterface
         $this->strava = $strava;
 
         $this->rides = $rides;
+        $this->metric = (bool) $metric;
         $this->points = $this->getPoints();
     }
 
@@ -89,12 +91,12 @@ class User implements UserInterface
     }
     public function getName()
     {
-        return $this->name;
+        return ucwords($this->name);
     }
     public function getFirstName()
     {
         $names = explode(' ', $this->name);
-        $firstname = array_shift(array_values($names));
+        $firstname = ucwords(array_shift(array_values($names)));
         if($firstname == '' || !$firstname)
             return $this->username;
         else
@@ -103,7 +105,7 @@ class User implements UserInterface
     public function getSurname()
     {
         $names = explode(' ', $this->name);
-        $surname = end($names);
+        $surname = ucwords(end($names));
 
         if($surname == '' || !$surname)
             return $this->username;
@@ -112,7 +114,7 @@ class User implements UserInterface
     }
     public function getPrivateName()
     {
-       return $this->getFirstName().' '.substr($this->getSurname(), 0, 1).'.';
+       return ucwords($this->getFirstName().' '.substr($this->getSurname(), 0, 1).'.');
     }
     public function getForumName()
     {
@@ -133,6 +135,10 @@ class User implements UserInterface
         foreach($rides as $r){
             $points = $points + $r->getPoints();
         }
+
+        /*if($this->username == 'wayne'){
+            return $points - ($points * 2);
+        }*/
         return $points;
     }
     public function getRides($month = null, $year = null)
@@ -163,15 +169,16 @@ class User implements UserInterface
         }
         return $points;
     }
-    public function getTotalKm($month = null, $year = null)
+    public function getTotalDistance($month = null, $year = null, $metric = true)
     {
         $rides = $this->getRides($month, $year);
 
-        $km = 0;
+        $distance = 0;
         foreach($rides as $r){
-            $km += $r->getKm();
+            $distance += $r->getDistance($metric, true);
         }
-        return $km;
+
+        return $distance;
     }
     public function getNoOfCenturies($month = null, $year = null)
     {
@@ -205,6 +212,9 @@ class User implements UserInterface
                     return true;
             }
         }
+    }
+    public function isMetric(){
+        return $this->metric;
     }
 
 }

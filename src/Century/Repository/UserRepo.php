@@ -31,7 +31,9 @@ class UserRepo Extends Repository
                     $rides[] = $ride;
                 }
             }   
-        	$user = new User($u['user_id'], $u['username'], $u['password'], explode(',', $u['roles']), $u['email'], $u['name'], $u['forum_name'], $u['strava'], $rides);
+
+
+        	$user = new User($u['user_id'], $u['username'], $u['password'], explode(',', $u['roles']), $u['email'], $u['name'], $u['forum_name'], $u['strava'], $rides, $u['metric']);
        		$users[] = $user;
         }
 

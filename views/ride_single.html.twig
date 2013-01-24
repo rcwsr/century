@@ -43,8 +43,26 @@
 	                </a>
 	            </td>
 				<td>{{ ride.getDate().format('d/m/Y') }}</td>
-				<td>{{ ride.getKm() }}km</td>
-				<td>{{ ride.getAverageSpeed() }}</td>
+				<td>{% if is_granted('ROLE_USER') %}
+			        		{% if app.security.getToken().getUser().isMetric() %}	
+	        					{{ ride.getDistance()|km }}km
+	        				{% else %}
+	        					{{ ride.getDistance()|miles }}mi
+	        				{% endif %}
+	        			{% else %}
+	        				{{ ride.getDistance()|km }}km
+			        	{% endif %}</td>
+				<td>{% if is_granted('ROLE_USER') %}
+			        		{% if app.security.getToken().getUser().isMetric() %}	
+	        					{{ ride.getAverageSpeed()|km }}kmph
+	        				{% else %}
+	        					{{ ride.getAverageSpeed()|miles }}mph
+	        				{% endif %}
+	        			{% else %}
+	        				{{ ride.getAverageSpeed()|km }}kmph
+			        	{% endif %}
+
+			        	</td>
 				<td>{{ ride.getPoints() }}</td>
 				<td>
 					{% if ride.getUrl() %}
@@ -55,10 +73,10 @@
 				</td>
 				{% if ride.getDetails() %}
 				<tr>
-					<td class="center" colspan="6">Notes</td>
+					<th colspan="6">Notes</th>
 				</tr>
 				<tr>
-					<td class="center" colspan="6">{{ ride.getDetails() }}</td>
+					<td colspan="6">{{ ride.getDetails() }}</td>
 				</tr>
 				{% endif %}
 			</tr>

@@ -94,7 +94,7 @@ class RideModificationController
 	    if (null !== $token) {
 	        $user = $token->getUser();
 	    }
-	    return $user->getUserId();
+	    return $user;
 	}
 	public function addRidePage(Request $request)
 	{
@@ -124,7 +124,7 @@ class RideModificationController
 	public function addRideStrava(Request $request)
 	{
 	    //Get Logged in user_id
-	    $user_id = $this->getLoggedInUser();
+	    $user_id = $this->getLoggedInUser()->getUserId();
 
 	    //Fetch form data to be submitted.
 	    $data = $request->get('form');
@@ -178,7 +178,7 @@ class RideModificationController
 	public function addRideManual(Request $request)
 	{
 		
-	    $user_id = $this->getLoggedInUser();
+	    $user_id = $this->getLoggedInUser()->getUserId();
 
 	    $data = $request->get('form');
 	    //validate
@@ -194,12 +194,20 @@ class RideModificationController
 	        return $this->app->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
 	    }
 	    else {
+	    	if(!$this->getLoggedInUser()->isMetric()){
+	    		$distance = $data['km'] * 1.609344;
+	    		$ave =  $data['average_speed'] * 1.609344;
+	    	}
+	    	else{
+	    		$distance = $data['km'];
+	    		$ave = $data['average_speed'];
+	    	}
 	        $prepared_data = array(
 	                'user_id' => $user_id,
-	                'km' => $data['km'],
+	                'km' => $distance,
 	                'url' => $data['url'],
 	                'date' => $data['date'],
-	                'average_speed' => $data['average_speed'],
+	                'average_speed' => $ave,
 	                'strava_ride_id' => null
 	            );
 	        $this->app['rides']->insert($prepared_data);
@@ -219,7 +227,7 @@ class RideModificationController
 
 	    //Check user is allowed to view this.
 	    //Get logged in user
-	    $logged_in_user_id = $this->getLoggedInUser();
+	    $logged_in_user_id = $this->getLoggedInUser()->getUserId();
 	    $ride_user_id = $ride->getUserId();
 
 	    if($ride_user_id !== $logged_in_user_id){
@@ -227,11 +235,24 @@ class RideModificationController
 	    }
 
 	    if ($this->app['request']->getMethod() === 'GET') {
+
+	    	//Until I can figure out data transformers
+	    	//Convert to miles.
+	    	if(!$this->getLoggedInUser()->isMetric()){
+	    		$distance = round($ride->getDistance() * 0.621371192, 1);
+	    		$ave =  round($ride->getAverageSpeed() * 0.621371192, 1);
+	    	}
+	    	else{
+	    		$distance = $ride->getDistance();
+	    		$ave = $ride->getAverageSpeed();
+	    	}
+
+
 	    	$ride_data = array(
 	    		'ride_id' =>$ride->getRideId(),
 	            'date' => $ride->getDate()->format('Y-m-d'),
-	            'km' => $ride->getKm(),
-	            'average_speed' => $ride->getAverageSpeed(),
+	            'km' => $distance,
+	            'average_speed' => $ave,
 	            'url' => $ride->getUrl(),
 	            'details' => $ride->getDetails()
 	        );
@@ -246,7 +267,27 @@ class RideModificationController
 	    }
 	    elseif($this->app['request']->getMethod() === 'POST'){
 	    	
-	    	$ride_data = $request->get('form');
+	    	$form_data = $request->get('form');
+
+	    	//Until I can figure out data transformers
+	    	//Convert to km.
+	    	if(!$this->getLoggedInUser()->isMetric()){
+	    		$distance = $form_data['km'] * 1.609344;
+	    		$ave =  $form_data['average_speed'] * 1.609344;
+	    	}
+	    	else{
+	    		$distance = $form_data['km'];
+	    		$ave = $form_data['average_speed'];
+	    	}
+
+	    	$ride_data = array(
+	    		'ride_id' => $request->get('id'),
+	            'date' => $form_data['date'],
+	            'km' => $distance,
+	            'average_speed' => $ave,
+	            'url' => $form_data['url'],
+	            'details' => $form_data['details']
+	        );
 
 	    	$errors = $this->validateManualForm($ride_data);
 
@@ -281,13 +322,12 @@ class RideModificationController
 
 	    //Check user is allowed to view this.
 	    //Get logged in user
-	    $logged_in_user_id = $this->getLoggedInUser();
+	    $logged_in_user_id = $this->getLoggedInUser()->getUserId();
 	    $ride_user_id = $ride->getUserId();
 
 	    //check user ids match
 	    if($ride_user_id !== $logged_in_user_id){
 	        $this->app->abort(401, "You can't delete other user's rides!");
-
 	    }
 
 	    if($this->app['request']->getMethod() === 'GET'){

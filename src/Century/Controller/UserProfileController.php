@@ -1,0 +1,147 @@
+<?php
+
+namespace Century\Controller;
+
+use Silex\Application;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Constraints as Assert;
+
+
+class UserProfileController
+{
+	protected $app;
+
+	public function __construct(Application $app)
+	{
+		$this->app = $app;
+	}
+	public function validateProfileForm(array $data)
+	{	
+	    $constraint = new Assert\Collection(array(
+	                        'email' => new Assert\NotBlank(),
+	                        'name' => new Assert\NotBlank(),
+	                        'forum_name' => new Assert\NotBlank()
+	                        ));
+	    $validation_data = array(
+			'email' => $data['email'],
+			'name' => $data['name'],
+			'forum_name' => $data['forum_name']
+	    );
+	    $errors = $this->app['validator']->validateValue($validation_data, $constraint);
+		
+		return $errors;
+	}
+	public function displayProfile(Request $request){
+		//Show Rides for specific user
+	    
+	    $username = $this->app->escape($request->get('username'));
+
+	    $user = $this->app['users']->getUserByUsername($username);
+	    
+	    
+	    if(!$user){
+	         $this->app->abort(404, "User $username does not exist");
+	    }
+
+	    $months = array();
+	    $year = (int) date('Y');
+	    foreach (range((int) date('n'), 1) as $month) {
+	        $months[$month] = array(
+	            'date' => date('F', mktime(0, 0, 0, $month)),          
+	            'rides' => $this->app['rides']->getAllRides($user->getUserId(), $month, $year)
+	        );
+	    }
+	    $year = (int) date('Y');
+	    $month =  (int) date('n');
+	    $page_data = array(
+	        'total_distance_year' => $user->getTotalDistance(null, $year),
+	        'total_distance_month' => $user->getTotalDistance($month, $year),
+	        'total_points_year' => $user->getTotalPoints(null, $year),
+	        'total_points_month' => $user->getTotalPoints($month, $year),
+	        'centuries_year' => $user->getNoOfCenturies(null, $year),
+	        'centuries_month' => $user->getNoOfCenturies($month, $year),
+	        );
+	    return $this->app['twig']->render('profile.html.twig', array(
+	        'page_data' => $page_data,
+	        'user' => $user,
+	        'months' => $months,
+	        'userRepo' => $this->app['users']
+	    ));
+	}
+	public function editProfile(Request $request)
+	{
+		$username = $this->app->escape($request->get('username'));
+		$user = $this->app['users']->getUserByUsername($username);
+		if ($this->app['request']->getMethod() === 'GET') {
+			
+		    
+		    
+		    if(!$user){
+		         $this->app->abort(404, "User $username does not exist");
+		    }
+
+		    $user_data = array(
+
+		    	'name' => $user->getName(),
+		    	'email' => $user->getEmail(),
+		    	'forum_name' => $user->getForumName(),
+		    	'metric' => $user->isMetric(),
+		    	'strava' => $user->getStrava()
+		    	);
+
+		    $form = $this->createEditProfileForm($user_data);
+		    return $this->app['twig']->render('edit_profile.html.twig', array(
+                'form' => $form->createView(), 
+                'errors' => null,
+            ));
+
+		}
+		elseif($this->app['request']->getMethod() === 'POST'){
+
+			$user_data = $request->get('form');
+	    	$form = $this->createEditProfileForm($user_data);
+
+	    	$errors = $this->validateProfileForm($user_data);
+
+			if (count($errors) > 0) {
+				return $this->app['twig']->render('edit_profile.html.twig', array(
+	                'form' => $form->createView(), 
+	                'errors' => $errors,
+            	));
+		    }
+		    else {
+		    	$this->app['users']->update($user_data, array('user_id' => $user->getUserId()));
+		    	return $this->app['twig']->render('success.html.twig', array('message' => $user->getFirstname().', you have sucessfully updated your profile'));
+		    }
+		}
+
+	    
+	}
+	public function createEditProfileForm($return_data)
+	{
+		$form = $this->app['form.factory']->createBuilder('form', $return_data)
+	        ->add('name', 'text', array(
+	            'label' => 'Full name (first name and surname - this will only be shown to logged in users.) *',
+	            'required' => true
+	        ))
+	        ->add('email', 'text', array(
+	            'label' => 'E-mail address *',
+	            'required' => true
+	        ))
+	        ->add('forum_name', 'text', array(
+	            'label' => 'LFCC forum username *',
+	            'required' => true
+	        ))
+	        ->add('metric', 'choice', array(
+	        	'label' => 'Measurements *',
+	            'choices' => array(true => 'Metric (km)', false => 'Imperial (miles)'),
+	            'required' => true
+	        ))
+	        ->add('strava', 'text', array(
+	            'label' => 'Strava athlete ID',
+	            'required' => false
+	        ))
+	        ->getForm();
+	    return $form;
+	}
+}

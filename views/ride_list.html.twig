@@ -23,7 +23,24 @@
 			        		
 
 			        		</h4>
-			        		<p>for riding <a href="/ride/{{ ride.getRideId() }}">{{ ride.getKm(true) }}km on {{ ride.getDate().format('d/m/Y') }}</a></p>
+			        		<p>for riding <a href="/ride/{{ ride.getRideId() }}">
+
+			        	{% if is_granted('ROLE_USER') %}
+			        		{% if app.security.getToken().getUser().isMetric() %}	
+	        					{{ ride.getDistance()|km }}km
+	        				{% else %}
+	        					{{ ride.getDistance()|miles }}mi
+	        				{% endif %}
+	        			{% else %}
+	        				{{ ride.getDistance()|km }}km
+			        	{% endif %}
+
+
+
+
+			        		on {{ ride.getDate().format('d/m/Y') }}</a></p>
+
+
 			        		{% if is_granted('ROLE_USER') %}
 			        			{% if app.security.getToken().getUser().getUserId() == ride.getUserId() %}
 					        		<ul class="inline  pull-right">

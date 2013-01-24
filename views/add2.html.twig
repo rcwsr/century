@@ -15,12 +15,24 @@
                             {{ form_label(form.km) }}
                             <div class="input-append">
                                 {{ form_widget(form.km, {'attr': {'class': 'input-mini'}}) }}
-                                <span class="add-on">km</span>
+                                <span class="add-on">
+                                {% if app.security.getToken().getUser().isMetric() %}   
+                                   km
+                                {% else %}
+                                   mi
+                                {% endif %}</span>
                             </div>
                             {{ form_label(form.average_speed) }}
                             <div class="input-append">
                                 {{ form_widget(form.average_speed, {'attr': {'class': 'input-mini'}}) }}
-                                <span class="add-on">km/h</span>
+                                <span class="add-on">
+                                {% if app.security.getToken().getUser().isMetric() %}   
+                                   km/h
+                                {% else %}
+                                   mph
+                                {% endif %}
+                                </span>
+                                
                             </div>
 
                             {{ form_label(form.url) }}
@@ -32,7 +44,7 @@
                             {{ form_label(form.details) }}
                             {{ form_widget(form.details, {'attr': {'class': 'input-xlarge', 'rows': 8}}) }}
                             <div class="clearfix"></div>
-                            <button  type="submit" class="btn" name="submit">Submit Ride</button>
+                            <button  type="submit" class="btn btn-success" name="submit">Submit Ride</button>
                         </fieldset>
                         
                     </form>
@@ -53,7 +65,7 @@
                                 <span class="add-on">http://app.strava.com/activities/</span>
                                 
                                 {{ form_widget(form_strava.strava_ride_id, {'attr': {'class': 'input-mini'}}) }}
-                                <button  type="submit" class="btn" name="submit">Go</button>
+                                <button  type="submit" class="btn btn-success" name="submit">Go</button>
                             </div>
                             
                         </fieldset>

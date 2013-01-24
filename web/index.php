@@ -19,11 +19,13 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Validator\Constraints as Assert;
 use Century\Controller\RideModificationController;
 use Century\Controller\UserRegistrationController;
-
-
-
+use Century\Controller\UserProfileController;
+use Century\Controller\RideDisplayController;
+use Century\Form\DataTransformer\MilesToKmDataTransformer;
+use Century\Form\DataTransformer\KmToMilesDataTransformer;
 
 $app = new Silex\Application();
+
 
 /**
  Register Services
@@ -72,9 +74,34 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
         // You can rename ROLE_USER as you wish
         array('^/add', 'ROLE_USER'),
         array('^/add/0|[1-9][0-9]*/edit', 'ROLE_USER'),
-        array('^/add/0|[1-9][0-9]*/delete', 'ROLE_USER')
+        array('^/add/0|[1-9][0-9]*/delete', 'ROLE_USER'),
+        array('^/profile/^.*$/delete', 'ROLE_USER')
     )
 ));
+
+//Twig Options/Extensions
+$app['twig'] = $app->share($app->extend('twig', function($twig, $app) {
+    $twig->addFilter('miles', new \Twig_Filter_Function('miles'));
+    $twig->addFilter('km', new \Twig_Filter_Function('km'));
+    function miles($km)
+    {
+        return round((int) $km * 0.621371192, 1);
+    }
+    function km($km)
+    {
+        return $km;
+    }
+    return $twig;
+}));
+ 
+/*
+$app['miles_to_km'] = $app->share(function() use ($app) {
+    return new MilesToKmDataTransformer($app);
+});
+$app['km_to_miles'] = $app->share(function() use ($app) {
+    return new KmToMilesDataTransformer($app);
+});
+*/
 
 /**
  Register Controllers: 
@@ -86,7 +113,12 @@ $app['ride_modification.controller'] = $app->share(function() use ($app) {
 $app['user_registration.controller'] = $app->share(function() use ($app) {
     return new UserRegistrationController($app);
 });
-
+$app['user_profile.controller'] = $app->share(function() use ($app) {
+    return new UserProfileController($app);
+});
+$app['ride_display.controller'] = $app->share(function() use ($app) {
+    return new RideDisplayController($app);
+});
 
 $app['debug'] = true;
 
@@ -101,10 +133,17 @@ $app->post('/add/strava', "ride_modification.controller:addRideStrava");
 $app->match('/ride/{id}/edit', "ride_modification.controller:editRide");
 $app->match('/ride/{id}/delete', "ride_modification.controller:deleteRide");
 
+//Ride Display:
+$app->get('/rides', "ride_display.controller:allRides");
+$app->get('/ride/{ride_id}', "ride_display.controller:singleRide");
 
 //User Registration:
 $app->match('/login', "user_registration.controller:login");
 $app->match('/register', "user_registration.controller:register");
+
+//Profile
+$app->get('/profile/{username}', "user_profile.controller:displayProfile");
+$app->match('/profile/{username}/edit', "user_profile.controller:editProfile");
 
 
 $app->get('/', function () use ($app) {
@@ -135,80 +174,6 @@ $app->get('/', function () use ($app) {
         'year' => $year,
         'userRepo' => $app['users']
     ));
-});
-
-$app->get('/rides', function () use ($app) {
-        $rides = $app['rides']->getAllRides();
-
-        $months = array();
-        $year = (int) date('Y');
-        foreach (range((int) date('n'), 1) as $month) {
-        $months[$month] = array(
-            'date' => date('F', mktime(0, 0, 0, $month)),          
-            'rides' => $app['rides']->getAllRides(null, $month, $year)
-        );
-    }
-    return $app['twig']->render('rides.html.twig', array(
-        'months' => $months,
-        'userRepo' => $app['users']
-    ));
-});
-
-$app->get('/profile/{username}', function ($username) use ($app) {
-    //Show Rides for specific user
-    
-    $username = $app->escape($username);
-
-    $user = $app['users']->getUserByUsername($username);
-    
-    
-    if(!$user){
-         $app->abort(404, "User $username does not exist");
-    }
-
-    $months = array();
-    $year = (int) date('Y');
-    foreach (range((int) date('n'), 1) as $month) {
-        $months[$month] = array(
-            'date' => date('F', mktime(0, 0, 0, $month)),          
-            'rides' => $app['rides']->getAllRides($user->getUserId(), $month, $year)
-        );
-    }
-    $year = (int) date('Y');
-    $month =  (int) date('n');
-    $page_data = array(
-        'total_km_year' => $user->getTotalKm(null, $year),
-        'total_km_month' => $user->getTotalKm($month, $year),
-        'total_points_year' => $user->getTotalPoints(null, $year),
-        'total_points_month' => $user->getTotalPoints($month, $year),
-        'centuries_year' => $user->getNoOfCenturies(null, $year),
-        'centuries_month' => $user->getNoOfCenturies($month, $year),
-        );
-    return $app['twig']->render('profile.html.twig', array(
-        'page_data' => $page_data,
-        'user' => $user,
-        'months' => $months,
-        'userRepo' => $app['users']
-    ));
-});
-
-$app->get('/ride/{ride_id}', function ($ride_id) use ($app) {
-    $ride_id = $app->escape($ride_id);
-
-    $ride = $app['rides']->getRideById($ride_id);
-
-    if(!$ride){
-         $app->abort(404, "Ride #$ride_id does not exist");
-    }
-
-    $user = $app['users']->getUserById($ride->getUserId());
-
-
-    $page_data = array(
-        'user' => $user,
-        'ride' => $ride
-        );
-    return $app['twig']->render('ride_single.html.twig', $page_data);
 });
 
 $app->run();

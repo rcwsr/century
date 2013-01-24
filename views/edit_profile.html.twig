@@ -3,7 +3,7 @@
 {% block body %}
 <div class="row">
     <div class="span12">
-        <h1>Register</h1>
+        <h1>Edit profile</h1>
     </div>
 </div>
 
@@ -11,24 +11,19 @@
     <div class="span12">
         <form action="" method="post">
             {% if errors %}
-                <div class="alert alert-danger"><strong>{{ errors }} {{ username_error }}</strong></div>
+                <div class="alert alert-danger"><strong>{{ errors }}</strong></div>
             {% endif %}
             
            
             <fieldset>
-                <legend>Enter your details below</legend>
+                <legend>Modify your details below</legend>
                 {% autoescape %}
-                {{ form_label(form.username) }}
-                {{ form_widget(form.username) }}
 
                 {{ form_label(form.email) }}
                 {{ form_widget(form.email) }}
 
                 {{ form_label(form.name) }}
                 {{ form_widget(form.name) }}
-     
-                {{ form_label(form.password) }}
-                {{ form_widget(form.password, {'attr': {'autocomplete': 'off'}}) }}
 
                 {{ form_label(form.forum_name) }}
                 {{ form_widget(form.forum_name) }}
@@ -46,7 +41,7 @@
 
             
 
-            <button  type="submit" class="btn btn-success" name="submit">Register</button>
+            <button  type="submit" class="btn btn-success" name="submit">Save</button>
             <span class="help-inline">* denotes required field</span>
         </form>
     </div>

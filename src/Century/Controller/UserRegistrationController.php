@@ -4,7 +4,6 @@ namespace Century\Controller;
 
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Constraints as Assert;
 
 
 class UserRegistrationController
@@ -75,6 +74,11 @@ class UserRegistrationController
 	            'label' => 'LFCC forum username *',
 	            'required' => true
 	        ))
+	        ->add('metric', 'choice', array(
+	        	'label' => 'Measurements *',
+	            'choices' => array(true => 'Metric (km)', false => 'Imperial (miles)'),
+	            'required' => true
+	        ))
 	        ->add('strava', 'text', array(
 	            'label' => 'Strava athlete ID',
 	            'required' => false
@@ -120,7 +124,8 @@ class UserRegistrationController
 	                'email'     => $registration_data['email'],
 	                'name'      => $registration_data['name'],
 	                'forum_name'=> $registration_data['forum_name'],
-	                'strava'    => $registration_data['strava']
+	                'strava'    => $registration_data['strava'],
+	                'metric'	=> $registration_data['metric']
 	            ));
 	            
 	            $names = explode(' ', $registration_data['name']);

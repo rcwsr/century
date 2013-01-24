@@ -50,7 +50,17 @@
 			</thead>
 			<tbody>
 				<td>{{ page_data.total_points_month}}</td>
-				<td>{{ page_data.total_km_month}}</td>
+				<td>
+				{% if is_granted('ROLE_USER') %}
+	        		{% if app.security.getToken().getUser().isMetric() %}	
+    					{{ page_data.total_distance_month|km }}km
+    				{% else %}
+    					{{ page_data.total_distance_month|miles }}mi
+    				{% endif %}
+    			{% else %}
+    				{{ page_data.total_distance_month|km }}km
+	        	{% endif %}
+				</td>
 				<td>{{ page_data.centuries_month}}</td>
 			</tbody>
 		</table>
@@ -69,7 +79,17 @@
 			</thead>
 			<tbody>
 				<td>{{ page_data.total_points_year}}</td>
-				<td>{{ page_data.total_km_year}}</td>
+				<td>
+				{% if is_granted('ROLE_USER') %}
+	        		{% if app.security.getToken().getUser().isMetric() %}	
+    					{{ page_data.total_distance_year|km }}km
+    				{% else %}
+    					{{ page_data.total_distance_year|miles }}mi
+    				{% endif %}
+    			{% else %}
+    				{{ page_data.total_distance_year|km }}km
+	        	{% endif %}
+				</td>
 				<td>{{ page_data.centuries_year}}</td>
 			</tbody>
 		</table>

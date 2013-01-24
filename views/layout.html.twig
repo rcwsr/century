@@ -39,6 +39,7 @@
                      {% if is_granted('ROLE_USER') %}
                       <ul class="nav pull-right">
                         <li><p class="navbar-text">Hello  {{ app.security.getToken().getUser().getFirstName() }}! ({{ app.security.getToken().getUser().getUsername() }})</p></li>
+                        <li><a href="/profile/{{ app.security.getToken().getUser().getUsername() }}/edit">Edit profile</a></li>
                         <li><a href="/logout">Logout</a></li>
 
                      </ul>

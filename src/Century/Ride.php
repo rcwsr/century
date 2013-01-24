@@ -59,17 +59,15 @@ class Ride
         $this->user_id = $user_id;
     }
 
-    public function getKm($round = false) 
+    public function getKm() 
     {
-        if($round){
-            return round($this->km);
-        }
-        else{
-            return $this->km;
-        }
-       
+        return $this->km;
     }
 
+    public function getDistance($metric = true)
+    {
+        return $this->km;
+    }
     public function setKm($km) 
     {
         $this->km = $km;
