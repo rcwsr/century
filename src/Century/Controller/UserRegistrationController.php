@@ -27,7 +27,7 @@ class UserRegistrationController
 	    $constraint = new Assert\Collection(array(
 	                        'username' => array(new Assert\NotBlank(), new Assert\Regex(array('pattern' => '/^[a-z0-9_-]{3,30}$/'))),
 	                        'email' => new Assert\NotBlank(),
-	                        'name' => new Assert\NotBlank(),
+	                        'name' => array(new Assert\NotBlank(), new Assert\Regex(array('pattern' => '/^((\b[a-zA-Z]{2,60}\b)\s*){2,}$/'))),
 	                        'password' => new Assert\NotBlank(),
 	                        'forum_name' => new Assert\NotBlank()
 	                        ));
