@@ -1,6 +1,7 @@
 <table class="table table-striped table-bordered {% if count_qualified_users > 15 %} table-condensed {% endif %}">
     <thead>
         <tr>
+            <th style="width:40px">Rank</th>
             <th>Name</th>
             <th>Total</th>
             {% for month in months %}
@@ -10,8 +11,10 @@
     </thead>
             
     <tbody>
+        {% set counter = 0 %}
         {% for user in users %}
             <tr>
+                <td style="width:40px; text-align:right">{% set counter = counter + 1 %}{{ counter }}</td>
                 <td><a href="profile/{{ user.getUsername() }}">
                 {% if is_granted('ROLE_USER') %}
                     {{ user.getName() }}
