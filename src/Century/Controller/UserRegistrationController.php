@@ -25,7 +25,7 @@ class UserRegistrationController
 	public function validateRegistrationForm(array $data)
 	{	
 	    $constraint = new Assert\Collection(array(
-	                        'username' => new Assert\NotBlank(),
+	                        'username' => array(new Assert\NotBlank(), new Assert\Regex(array('pattern' => '/^[a-z0-9_-]{3,30}$/'))),
 	                        'email' => new Assert\NotBlank(),
 	                        'name' => new Assert\NotBlank(),
 	                        'password' => new Assert\NotBlank(),

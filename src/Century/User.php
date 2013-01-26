@@ -136,9 +136,9 @@ class User implements UserInterface
             $points = $points + $r->getPoints();
         }
 
-        /*if($this->username == 'wayne'){
+        if($this->username == 'wayne'){
             return $points - ($points * 2);
-        }*/
+        }
         return $points;
     }
     public function getRides($month = null, $year = null)
