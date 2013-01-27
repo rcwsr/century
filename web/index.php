@@ -75,7 +75,7 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
         array('^/add', 'ROLE_USER'),
         array('^/add/0|[1-9][0-9]*/edit', 'ROLE_USER'),
         array('^/add/0|[1-9][0-9]*/delete', 'ROLE_USER'),
-        array('^/profile/^.*$/delete', 'ROLE_USER')
+        array('^/profile/^.*$/edit', 'ROLE_USER')
     )
 ));
 
@@ -140,6 +140,7 @@ $app->get('/ride/{ride_id}', "ride_display.controller:singleRide");
 //User Registration:
 $app->match('/login', "user_registration.controller:login");
 $app->match('/register', "user_registration.controller:register");
+$app->match('/resetpassword', "user_registration.controller:resetPassword");
 
 //Profile
 $app->get('/profile/{username}', "user_profile.controller:displayProfile");

@@ -15,6 +15,14 @@ class UserProfileController
 	{
 		$this->app = $app;
 	}
+	public function getLoggedInUser()
+	{
+		$token = $this->app['security']->getToken();
+	    if (null !== $token) {
+	        $user = $token->getUser();
+	    }
+	    return $user;
+	}
 	public function validateProfileForm(array $data)
 	{	
 	    $constraint = new Assert\Collection(array(
@@ -72,8 +80,13 @@ class UserProfileController
 	{
 		$username = $this->app->escape($request->get('username'));
 		$user = $this->app['users']->getUserByUsername($username);
+		$logged_in_user_id = $this->getLoggedInUser()->getUserId();
+
 		if ($this->app['request']->getMethod() === 'GET') {
 			
+			if($user->getUserId()!== $logged_in_user_id){
+	        	$this->app->abort(401, "You can't edit other user's profiles!");
+	    	}
 		    
 		    
 		    if(!$user){
@@ -98,6 +111,10 @@ class UserProfileController
 		}
 		elseif($this->app['request']->getMethod() === 'POST'){
 
+			if($user->getUserId()!== $logged_in_user_id){
+	        	$this->app->abort(401, "You can't edit other user's profiles!");
+	    	}
+	    	
 			$user_data = $request->get('form');
 	    	$form = $this->createEditProfileForm($user_data);
 
