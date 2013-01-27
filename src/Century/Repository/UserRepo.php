@@ -12,9 +12,9 @@ class UserRepo Extends Repository
     {
         return 'user';
     }
-    public function getAllUsers($sort_by_points = true, $disqualified = false)
+    public function getAllUsers($sort_by_points = true, $get_disqualified = false)
     {
-	    $sql_users = 'SELECT * FROM user';
+	    $sql_users = 'SELECT * FROM user ORDER BY name ASC';
     	$result_users = $this->db->fetchAll($sql_users);
         
         $sql_rides = 'SELECT * FROM ride' ;   
@@ -42,7 +42,7 @@ class UserRepo Extends Repository
                 return strcmp($a->getPoints(), $b->getPoints());
             });
         }*/
-        if($disqualified){
+        if($get_disqualified){
             $allowed_users = array();
             foreach($users as $user){
                 if(!$user->isDisqualified())

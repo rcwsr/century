@@ -42,6 +42,20 @@ class UserRegistrationController
 		
 		return $errors;
 	}
+	public function validatePasswordResetForm(array $data)
+	{	
+	    $constraint = new Assert\Collection(array(
+	                        'username' => array(new Assert\NotBlank(), new Assert\Regex(array('pattern' => '/^[a-z0-9_-]{3,30}$/'))),
+	                        'email' => new Assert\NotBlank()
+	                        ));
+	    $validation_data = array(
+	        'username' => $data['username'],
+			'email' => $data['email']
+	    );
+	    $errors = $this->app['validator']->validateValue($validation_data, $constraint);
+		
+		return $errors;
+	}
 
 	public function userNameExists($username){
 		$users = $this->app['users']->getAllUsers();
@@ -55,7 +69,7 @@ class UserRegistrationController
 	{
 		$form = $this->app['form.factory']->createBuilder('form', $return_data)
 	        ->add('username', 'text', array(
-	            'label' => 'Username *',
+	            'label' => 'Username (all lowercase, no spaces - use underscores instead.) *',
 	            'required' => true
 	        ))
 	        ->add('name', 'text', array(
@@ -89,7 +103,7 @@ class UserRegistrationController
 	public function register(Request $request)
 	{
 		//User registration
-	    //password confirmation
+		//password confirmation
 	     
 		if ($this->app['request']->getMethod() === 'GET') {
 			$return_data = null;
@@ -131,11 +145,89 @@ class UserRegistrationController
 	            $names = explode(' ', $registration_data['name']);
         		$firstname = array_shift(array_values($names));
 	            return $this->app['twig']->render('success.html.twig', array('message' => $firstname.', you have sucessfully registered your account, please login'));
-	        
-
 		    }
 	    }
+	}
+	public function resetPassword(Request $request)
+	{
+		if($this->app['request']->getMethod() === 'GET') {
+			$return_data = null;
 
-	   
+			$form = $this->createResetPasswordForm($return_data);
+			return $this->app['twig']->render('reset_password.html.twig', array('form' => $form->createView(), 'errors' => null, 'other_error' => null));
+		}
+		elseif($this->app['request']->getMethod() === 'POST'){
+			$reset_data = $request->get('form');
+			$form = $this->createRegistrationForm($reset_data);
+
+
+			$submitted_username = $reset_data['username'];
+			$submitted_email = $reset_data['email'];
+
+			$user = $this->app['users']->getUserByUsername($submitted_username);
+
+			$errors = $this->validatePasswordResetForm($reset_data);
+
+	    	if (count($errors) > 0) {
+	    		//First validate form
+	    		return $this->app['twig']->render('reset_password.html.twig', array('form' => $form->createView(), 'errors' => $errors, 'other_error' => null));
+	    	}
+	    	else{
+	    		//If form is valid check user exists and username matches email.
+				if(!$user){
+					$other_error = 'The details you entered aren\'t correct.';
+					return $this->app['twig']->render('reset_password.html.twig', array('form' => $form->createView(), 'errors' => null, 'other_error' => $other_error));
+				}
+				else{
+					if($user->getEmail() !== $submitted_email){
+						$other_error = 'The details you entered aren\'t correct.';
+						return $this->app['twig']->render('reset_password.html.twig', array('form' => $form->createView(), 'errors' => null, 'other_error' => $other_error));
+					}
+				}
+
+	    		//generate new password
+				$new_password = $this->randomStr(24);
+				$encrypted_password =  $this->app['security.encoder.digest']->encodePassword($new_password, strtolower($user->getUsername()));
+				//update user with new password
+				$this->app['users']->update(array('password' => $encrypted_password), array('user_id' => $user->getUserId()));
+				
+				//send email
+				$message = \Swift_Message::newInstance()
+			        ->setSubject('Century Challenge: Password Reset')
+			        ->setFrom(array('century@robcaw.com'))
+			        ->setTo(array('robincawser@gmail.com'))
+			        ->setBody('Your new password: '.$new_password);
+    			$this->app['mailer']->send($message);
+
+				return $this->app['twig']->render('success.html.twig', array('message' => 'A new password has been emailed to you'));	
+
+	    	}
+
+
+		}
+	}
+	public function createResetPasswordForm($return_data)
+	{
+		$form = $this->app['form.factory']->createBuilder('form', $return_data)
+	        ->add('username', 'text', array(
+	            'label' => 'Username *',
+	            'required' => true
+	        ))
+	        ->add('email', 'text', array(
+	            'label' => 'E-mail address *',
+	            'required' => true
+	        ))
+	        ->getForm();
+	    return $form;
+	}
+	public function randomStr($length = 5){
+		$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$count = strlen($chars);
+		$pw = '';
+		for($i = 0; $i < $length; $i++){
+			$index = rand(0, $count -1);
+			$pw .= substr($chars, $index, 1);
+		}
+		return $pw;
 	}
 }

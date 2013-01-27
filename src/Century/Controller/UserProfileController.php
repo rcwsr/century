@@ -114,7 +114,7 @@ class UserProfileController
 			if($user->getUserId()!== $logged_in_user_id){
 	        	$this->app->abort(401, "You can't edit other user's profiles!");
 	    	}
-	    	
+
 			$user_data = $request->get('form');
 	    	$form = $this->createEditProfileForm($user_data);
 
@@ -160,5 +160,9 @@ class UserProfileController
 	        ))
 	        ->getForm();
 	    return $form;
+	}
+	public function changePassword(Return $return)
+	{
+
 	}
 }

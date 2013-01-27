@@ -35,6 +35,7 @@ $app->register(new ConfigServiceProvider(__DIR__ . '/../config/config.yml'));
 $app->register(new Silex\Provider\SessionServiceProvider());
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
+$app->register(new Silex\Provider\SwiftmailerServiceProvider());
 $app->register(new FormServiceProvider());
 $app->register(new TranslationServiceProvider(), array(
     'locale_fallback' => 'en',
@@ -64,7 +65,6 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
             'form' => array('login_path' => '/login', 'check_path' => '/login_check'),
             'logout' => array('logout_path' => '/logout'),
             'users' => $app->share(function() use ($app) {
-                // raw password is foo
                 return new Century\Provider\UserProvider($app['db']);
             })
         ),
@@ -145,7 +145,7 @@ $app->match('/resetpassword', "user_registration.controller:resetPassword");
 //Profile
 $app->get('/profile/{username}', "user_profile.controller:displayProfile");
 $app->match('/profile/{username}/edit', "user_profile.controller:editProfile");
-
+$app->match('/profile/{username}/changepassword', "user_profile.controller:changePassword");
 //Index
 $app->get('/', function () use ($app) {
     //Show leaderboard and latest rides

@@ -10,13 +10,15 @@
 <div class="row">
     <div class="span12">
         <form action="" method="post">
-            {% if errors %}
-                <div class="alert alert-danger"><strong>{{ errors }} {{ username_error }}</strong></div>
-            {% endif %}
+           
             
            
             <fieldset>
                 <legend>Enter your details below</legend>
+                 {% if errors %}
+                    <div class="alert alert-danger"><strong>{{ errors }} {{ username_error }}</strong></div>
+                {% endif %}
+                
                 {% autoescape %}
                 {{ form_label(form.username) }}
                 {{ form_widget(form.username) }}

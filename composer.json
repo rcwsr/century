@@ -13,7 +13,8 @@
         "symfony/yaml": "2.1.*",
         "igorw/config-service-provider": "*",
         "knplabs/repository-service-provider": "dev-master",
-        "noginn/strava-client": "*"
+        "noginn/strava-client": "*",
+        "swiftmailer/swiftmailer": ">=4.1.2,<4.2-dev"
     },
     "autoload": {
         "psr-0": { "Century": "src/" }
