@@ -135,10 +135,9 @@ class User implements UserInterface
         foreach($rides as $r){
             $points = $points + $r->getPoints();
         }
-
-        if($this->username == 'milemuncher'){
+        /*if($this->username == 'milemuncher'){
             return $points - ($points * 2);
-        }
+        }*/
         return $points;
     }
     public function getRides($month = null, $year = null)
