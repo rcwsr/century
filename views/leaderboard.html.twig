@@ -30,10 +30,11 @@
             </tr>
         {% endfor %}
         {% if disqualified_users %}
-        <tr><td class="center" colspan="{{ months | length + 2}}"><strong>Disqualified</strong></td></tr>
+        <tr><td class="center" colspan="{{ months | length + 3}}"><strong>Disqualified</strong></td></tr>
         {% for user in disqualified_users %}
            
             <tr>
+                <td></td>
                 <td><a href="profile/{{ user.getUsername() }}">
                 {% if is_granted('ROLE_USER') %}
                     {{ user.getName() }}

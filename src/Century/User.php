@@ -96,7 +96,8 @@ class User implements UserInterface
     public function getFirstName()
     {
         $names = explode(' ', $this->name);
-        $firstname = ucwords(array_shift(array_values($names)));
+        $values = array_values($names);
+        $firstname = ucwords(array_shift($values));
         if($firstname == '' || !$firstname)
             return $this->username;
         else
