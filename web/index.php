@@ -21,8 +21,7 @@ use Century\Controller\RideModificationController;
 use Century\Controller\UserRegistrationController;
 use Century\Controller\UserProfileController;
 use Century\Controller\RideDisplayController;
-use Century\Form\DataTransformer\MilesToKmDataTransformer;
-use Century\Form\DataTransformer\KmToMilesDataTransformer;
+use Century\Controller\LeaderboardController;
 
 $app = new Silex\Application();
 
@@ -119,6 +118,9 @@ $app['user_profile.controller'] = $app->share(function() use ($app) {
 $app['ride_display.controller'] = $app->share(function() use ($app) {
     return new RideDisplayController($app);
 });
+$app['leaderboard.controller'] = $app->share(function() use ($app) {
+    return new LeaderboardController($app);
+});
 
 $app['debug'] = true;
 
@@ -146,38 +148,13 @@ $app->match('/resetpassword', "user_registration.controller:resetPassword");
 $app->get('/profile/{username}', "user_profile.controller:displayProfile");
 $app->match('/profile/{username}/edit', "user_profile.controller:editProfile");
 $app->match('/profile/{username}/changepassword', "user_profile.controller:changePassword");
+
+//Leaderboard
+$app->get('/leaderboard', "leaderboard.controller:leaderboard");
+
 //Index
 $app->get('/', function () use ($app) {
-    //Show leaderboard and latest rides
-    $rides = $app['rides']->getAllRides();
-    $users = $app['users']->getAllUsers(true, true);
-
-    $year = (int) date('Y');
-    $months = array();
-    
-    $count_qualified_users = count($rides);
-    foreach (range(1, (int) date('n')) as $month) {
-        
-         $months[$month] = array(
-            'date' => date('F', mktime(0, 0, 0, $month)),
-           
-            'rides' => $app['rides']->getAllRides(null, $month, $year)
-        );
-    }
-
-    $disqualified_users = $app['users']-> getDisqualifiedUsers();
-
-
-
-    return $app['twig']->render('index.html.twig', array(
-        'disqualified_users' => $disqualified_users,
-        'count_qualified_users' => $count_qualified_users,
-        'users' => $users,
-        'rides' => $rides,
-        'months' => $months,
-        'year' => $year,
-        'userRepo' => $app['users']
-    ));
+    return $app['twig']->render('index.html.twig', $app['leaderboard.controller']->getLeaderboardData());
 });
 
 $app->run();
