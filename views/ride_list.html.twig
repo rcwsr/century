@@ -1,11 +1,11 @@
 <div class="row">
     <div class="span12">
     <ul class="unstyled">
-    	{% for month in months %}
+    	{% for month in months|reverse %}
         <li><h2>{{ month.date }}</h2></li>
         <li>
         	<ul class="thumbnails">
-		        {% for ride in month.rides %}
+		        {% for ride in month.rides%}
 		        	<li class="span4">
 		        	
 			        	<div style="height:90px;" class="thumbnail">

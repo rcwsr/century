@@ -161,7 +161,7 @@ class UserProfileController
 	        ->getForm();
 	    return $form;
 	}
-	public function changePassword(Return $return)
+	public function changePassword()
 	{
 
 	}

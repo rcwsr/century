@@ -22,7 +22,7 @@ class RideDisplayController
 
 	        $months = array();
 	        $year = (int) date('Y');
-	        foreach (range((int) date('n'), 1) as $month) {
+	        foreach (range(1, (int) date('n')) as $month) {
 	        $months[$month] = array(
 	            'date' => date('F', mktime(0, 0, 0, $month)),          
 	            'rides' => $this->app['rides']->getAllRides(null, $month, $year)

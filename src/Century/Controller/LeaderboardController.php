@@ -24,7 +24,7 @@ class LeaderboardController
 	    $months = array();
 	    
 	    $count_qualified_users = count($rides);
-	    foreach (range((int) date('n'), 1) as $month) {
+	    foreach (range(1, (int) date('n')) as $month) {
 	        
 	         $months[$month] = array(
 	            'date' => date('F', mktime(0, 0, 0, $month)),
