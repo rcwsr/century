@@ -38,12 +38,17 @@
                            {% endif %}
                      </ul>
                      {% if is_granted('ROLE_USER') %}
-                      <ul class="nav pull-right">
-                        <li><p class="navbar-text">Hello  {{ app.security.getToken().getUser().getFirstName() }}! ({{ app.security.getToken().getUser().getUsername() }})</p></li>
-                        <li><a href="/profile/{{ app.security.getToken().getUser().getUsername() }}/edit">Edit profile</a></li>
-                        <li><a href="/logout">Logout</a></li>
+                      
+                      <div class="dropdown nav pull-right">
+                       <a class=" btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">Hello  {{ app.security.getToken().getUser().getFirstName() }}! ({{ app.security.getToken().getUser().getUsername() }})  <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                            <li><a href="/profile/{{ app.security.getToken().getUser().getUsername() }}/edit">Edit profile</a></li>
+                            <li><a href="/profile/{{ app.security.getToken().getUser().getUsername() }}/changepassword">Change password</a></li>
+                            <li><a href="/logout">Logout</a></li>
+                        </ul>
+                      </div>
 
-                     </ul>
+                   
                      {% else %}
                       <ul class="nav pull-right">
                         <li><a href="/login">Login</a></li>

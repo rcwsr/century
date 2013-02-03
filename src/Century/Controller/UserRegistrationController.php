@@ -230,4 +230,5 @@ class UserRegistrationController
 		}
 		return $pw;
 	}
+
 }
