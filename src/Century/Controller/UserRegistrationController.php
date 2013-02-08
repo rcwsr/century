@@ -195,7 +195,7 @@ class UserRegistrationController
 				$message = \Swift_Message::newInstance()
 			        ->setSubject('Century Challenge: Password Reset')
 			        ->setFrom(array('century@robcaw.com'))
-			        ->setTo(array('robincawser@gmail.com'))
+			        ->setTo(array($user->getEmail()))
 			        ->setBody('Your new password: '.$new_password);
     			$this->app['mailer']->send($message);
 
