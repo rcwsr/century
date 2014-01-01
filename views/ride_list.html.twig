@@ -23,7 +23,7 @@
 			        		
 
 			        		</h4>
-			        		<p>for riding <a href="/ride/{{ ride.getRideId() }}">
+			        		<p>for riding {{ ride.getRideId() }}
 
 			        	{% if is_granted('ROLE_USER') %}
 			        		{% if app.security.getToken().getUser().isMetric() %}	

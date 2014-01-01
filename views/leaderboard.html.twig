@@ -20,7 +20,7 @@
         {% for user in users %}
             <tr>
                 <td style="width:40px; text-align:right">{% set counter = counter + 1 %}{{ counter }}</td>
-                <td><a href="profile/{{ user.getUsername() }}">
+                <td><a href="/profile/{{ user.getUsername() }}">
                 {% if is_granted('ROLE_USER') %}
                     {{ user.getName() }}
                 {% else %}
@@ -40,7 +40,7 @@
            
             <tr>
                 <td></td>
-                <td><a href="profile/{{ user.getUsername() }}">
+                <td><a href="/profile/{{ user.getUsername() }}">
                 {% if is_granted('ROLE_USER') %}
                     {{ user.getName() }}
                 {% else %}

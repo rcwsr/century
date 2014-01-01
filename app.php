@@ -36,6 +36,7 @@ $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 $app->register(new Silex\Provider\SwiftmailerServiceProvider());
 $app->register(new FormServiceProvider());
+$app->register(new StravaDL\Provider\StravaDownloaderServiceProvider());
 $app->register(new TranslationServiceProvider(), array(
     'locale_fallback' => 'en',
 ));
@@ -52,6 +53,7 @@ $app->register(new DoctrineServiceProvider(), array(
         'password' => $app['db.password']
     )
 ));
+
 $app->register(new RepositoryServiceProvider(), array('repository.repositories' => array(
     'rides'      => 'Century\\Repository\\RideRepo',
     'users'      => 'Century\\Repository\\UserRepo'
@@ -92,6 +94,7 @@ $app['twig'] = $app->share($app->extend('twig', function($twig, $app) {
     }
     return $twig;
 }));
+
 
 /*
 $app['miles_to_km'] = $app->share(function() use ($app) {

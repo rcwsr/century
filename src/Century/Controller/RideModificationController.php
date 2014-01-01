@@ -5,14 +5,10 @@ namespace Century\Controller;
 use Century\Validator\Constraints\DateRange;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Endurance\Strava\StravaClient;
-use Buzz\Browser;
-use Buzz\Message\Form\FormRequest;
-use Buzz\Message\Response;
-use Buzz\Util\Url;
-use Buzz\Client\Curl;
+
 
 class RideModificationController
 {
@@ -148,22 +144,32 @@ class RideModificationController
 	    }
 	    else {
 	        //If no errors, prepare strava data for submission
-	        $browser = new Browser(new Curl());
-	        $client = new StravaClient($browser);
-	        $ride_details = $client->getRideDetails($data['strava_ride_id']);
+
+
+
+
+            try{
+                $ride_details = $this->app['stravaDL']->getActivity($this->app['strava.key'], $data['strava_ride_id']);
+            }
+            catch(\Exception $e){
+                $this->app->error(function (\Exception $e, $code) {
+                    return new Response('We are sorry, but something went terribly wrong.');
+                });
+            }
 
 	        //Check if a strava activity could be fetched
-	        if(isset($ride_details['ride']['id'])){
+
+	        if(isset($ride_details['id'])){
 	            //This should probably not be in the controller.
 
 	            //Convert date to database compatible date
-	            $date = \DateTime::createFromFormat('Y-m-d\TH:i:s\Z', $ride_details['ride']['start_date_local']);
+	            $date = \DateTime::createFromFormat('Y-m-d\TH:i:s\Z', $ride_details['start_date_local']);
 	            //prepare an array of data to be submitted
 	            $prepared_data = array('user_id' => $user_id,
-	                                   'km' => round($ride_details['ride']['distance'] / 1000, 1),
+	                                   'km' => round($ride_details['distance'] / 1000, 1),
 	                                   'url' => 'http://app.strava.com/activities/'. (string) $ride_details['id'],
 	                                   'date' => $date->format('Y-m-d'),
-	                                   'average_speed' => $ride_details['ride']['average_speed'] * 3.6, // Convert from m/s to km/h
+	                                   'average_speed' => $ride_details['average_speed'] * 3.6, // Convert from m/s to km/h
 	                                   'strava_ride_id' => $ride_details['id'],
 	                                    );
 	            //Insert array to db.
@@ -174,6 +180,7 @@ class RideModificationController
 	        else{
 	            throw new \InvalidArgumentException('The ride ID is invalid');
 	        }
+
 	    }
 	}
 	
