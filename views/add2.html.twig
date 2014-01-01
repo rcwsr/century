@@ -10,7 +10,11 @@
                         <fieldset>
                             <legend>Enter the details of your ride below</legend>
                             {% if errors %}
-                                <div class="alert alert-danger"><strong>{{ errors }}</strong></div>
+                                <div class="alert alert-danger"><strong>
+                                    {% for error in errors %}
+                                        {{ error.getPropertyPath() }} {{ error.getMessage() }}<br>
+                                    {% endfor %}
+                                </strong></div>
                             {% endif %}
                             {{ form_label(form.km) }}
                             <div class="input-append">
@@ -56,9 +60,11 @@
                             <legend>Or, enter your Strava Ride ID</legend>
 
                             {% if strava_errors %}
-                                <div class="alert alert-danger">
-                                    <strong>{{ strava_errors }}</strong>
-                                </div>
+                                <div class="alert alert-danger"><strong>
+                                        {% for error in strava_errors %}
+                                            {{ error.getPropertyPath() }} {{ error.getMessage() }}<br>
+                                        {% endfor %}
+                                    </strong></div>
                             {% endif %}
 
                             <div class="input-prepend input-append">

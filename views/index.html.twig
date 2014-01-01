@@ -3,8 +3,16 @@
 {% block body %}
 <div class="row">
     <div class="span12">
-     <h1>Leaderboard</h1>
+        <h1>Leaderboard</h1>
     </div>
+    {% if not is_granted('ROLE_USER') %}
+    <div class="span8 offset2">
+        <div class="alert alert-info">
+            <strong>Welcome back</strong> A new season has begun! If you already created an account last year, just log in and start adding rides!
+        </div>
+    </div>
+    {% endif %}
+
 </div>
 
 <div class="row">

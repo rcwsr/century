@@ -151,7 +151,7 @@ $app->match('/profile/{username}/changepassword', "user.profile.controller:chang
 
 //Leaderboard
 $app->get('/leaderboard', "leaderboard.controller:leaderboard");
-
+$app->get('/leaderboard/{year}', "leaderboard.controller:leaderboardByYear")->assert('year', '\d{4}');
 //Index
 $app->get('/', function () use ($app) {
     return $app['twig']->render('index.html.twig', $app['leaderboard.controller']->getLeaderboardData());

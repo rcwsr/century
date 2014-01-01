@@ -39,7 +39,7 @@
                      {% if is_granted('ROLE_USER') %}
                       
                       <div class="dropdown nav pull-right">
-                       <a class=" btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">Hello  {{ app.security.getToken().getUser().getFirstName() }}! ({{ app.security.getToken().getUser().getUsername() }})  <span class="caret"></span></a>
+                       <a class=" btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">{{ app.security.getToken().getUser().getUsername() }}  <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
                             <li><a href="/profile/{{ app.security.getToken().getUser().getUsername() }}/edit">Edit profile</a></li>
                             <li><a href="/profile/{{ app.security.getToken().getUser().getUsername() }}/changepassword">Change password</a></li>

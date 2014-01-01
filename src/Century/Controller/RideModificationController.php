@@ -2,6 +2,7 @@
 
 namespace Century\Controller;
 
+use Century\Validator\Constraints\DateRange;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -62,7 +63,7 @@ class RideModificationController
 	public function validateManualForm(array $data)
 	{	
 	    $constraint = new Assert\Collection(array(
-	                        'date' => array(new Assert\Date(), new Assert\NotBlank()),
+	                        'date' => array(new Assert\Date(), new Assert\NotBlank(), new DateRange()),
 	                        'km' => array(new Assert\Regex(array('pattern' => '(0|[1-9][0-9]*)')),new Assert\NotBlank()),
 	                        'average_speed' => array(new Assert\Regex(array('pattern' => '(0|[1-9][0-9]*)')))
 	                        ));
@@ -79,7 +80,7 @@ class RideModificationController
 	public function validateStravaForm($data)
 	{
 		$constraint = new Assert\Collection(array(
-	        'strava_ride_id' => array(new Assert\NotBlank(), new Assert\MinLength(8))));
+	        'strava_ride_id' => array(new Assert\NotBlank(), new Assert\Length(array('min' => 8)))));
 	    $validation_data = array(
 	        'strava_ride_id' => $data['strava_ride_id']
 	        );
@@ -111,6 +112,7 @@ class RideModificationController
         $form = $this->createRideForm($return_data['return_form_data']);
 
         $form_strava = $this->createStravaRideForm($return_data['return_form_data']);
+
 
         return $this->app['twig']->render('add2.html.twig', array(
             'form' => $form->createView(), 

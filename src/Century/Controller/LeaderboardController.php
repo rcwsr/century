@@ -15,11 +15,15 @@ class LeaderboardController
 		$this->app = $app;
 	}
 
-	public function getLeaderboardData(){
+	public function getLeaderboardData($year = null, $all = false){
 		//Show leaderboard and latest rides
-        $year = (int) date('Y');
+
+        if(!$year){
+            $year = (int) date('Y');
+        }
+
 	    $rides = $this->app['rides']->getAllRides(null, null, $year);
-	    $users = $this->app['users']->getAllUsers(true, false, true);
+	    $users = $this->app['users']->getAllUsers(true, false, true, $year);
 
 
 
@@ -27,8 +31,15 @@ class LeaderboardController
 	    $months = array();
 	    
 	    $count_qualified_users = count($rides);
-	    foreach (range(1, (int) date('n')) as $month) {
-	        
+
+        if($all && $year != (int) date('Y')){
+            $range = range(1, 12);
+        }
+        else{
+            $range = range(1, (int) date('n'));
+        }
+
+	    foreach ($range as $month) {
 	         $months[$month] = array(
 	            'date' => date('F', mktime(0, 0, 0, $month)),
 	           
@@ -49,6 +60,12 @@ class LeaderboardController
 	}
 	public function leaderboard()
 	{
+
 	    return $this->app['twig']->render('leaderboard.html.twig', $this->getLeaderboardData() );
 	}
+
+    public function leaderboardByYear($year)
+    {
+        return $this->app['twig']->render('leaderboard.html.twig', $this->getLeaderboardData($year, true) );
+    }
 }
