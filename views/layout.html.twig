@@ -32,7 +32,6 @@
                            <li><a href="/">Home</a></li>
                            <li><a href="/leaderboard">Leaderboard</a></li>
                            <li><a href="/add">Add Ride</a></li>
-                           <li><a href="/rides">All Rides</a></li>
                            {% if is_granted('ROLE_USER') %}
                            <li><a href="/profile/{{ app.security.getToken().getUser().getUsername() }}">Your Rides</a></li>
                            {% endif %}

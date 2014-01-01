@@ -23,7 +23,7 @@
                 {% endif %}
 
                 </a></td>
-                <td>{{ user.getPoints() }}</td>
+                <td>{{ user.getPoints(null, year) }}</td>
                 {% for month in months|keys %}
                     <td>{{ user.getPoints(month, year) }}</td>
                 {% endfor %}

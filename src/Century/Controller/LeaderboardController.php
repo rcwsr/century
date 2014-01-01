@@ -17,10 +17,13 @@ class LeaderboardController
 
 	public function getLeaderboardData(){
 		//Show leaderboard and latest rides
-	    $rides = $this->app['rides']->getAllRides();
-	    $users = $this->app['users']->getAllUsers(true, true);
+        $year = (int) date('Y');
+	    $rides = $this->app['rides']->getAllRides(null, null, $year);
+	    $users = $this->app['users']->getAllUsers(true, false, true);
 
-	    $year = (int) date('Y');
+
+
+
 	    $months = array();
 	    
 	    $count_qualified_users = count($rides);
@@ -42,7 +45,6 @@ class LeaderboardController
 	        'rides' => $rides,
 	        'months' => $months,
 	        'year' => $year,
-	        'userRepo' => $this->app['users']
 	    );
 	}
 	public function leaderboard()

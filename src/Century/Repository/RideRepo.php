@@ -25,6 +25,10 @@ class RideRepo Extends Repository
             $sql = 'SELECT * FROM ride WHERE month(date) = ? AND year(date) = ? ORDER BY date desc';
         	$result = $this->db->fetchAll($sql, array($month, $year));
         }
+        elseif($user_id == null && $month == null && $year != null){
+            $sql = 'SELECT * FROM ride WHERE year(date) = ? ORDER BY date desc';
+            $result = $this->db->fetchAll($sql, array($year));
+        }
         elseif($user_id != null && $month != null && $year != null){
              $sql = 'SELECT * FROM ride WHERE month(date) = ? AND year(date) = ? AND user_id = ? ORDER BY date desc';
         	$result = $this->db->fetchAll($sql, array($month, $year, $user_id));

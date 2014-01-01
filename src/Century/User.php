@@ -147,8 +147,16 @@ class User implements UserInterface
         $rides_array = array();
 
         foreach($rides as $r){
-            if($month != null && $year != null){
+            if($month && $year){
                 if($r->getDate()->format('n') == $month && $r->getDate()->format('Y') == $year){
+                    $rides_array[] = $r;
+                }
+            }
+            elseif(!$month && !$year){
+                $rides_array[] = $r;
+            }
+            elseif(!$month && $year){
+                if($r->getDate()->format('Y') == $year){
                     $rides_array[] = $r;
                 }
             }

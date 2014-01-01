@@ -76,6 +76,7 @@ class UserProfileController
 	        'userRepo' => $this->app['users']
 	    ));
 	}
+
 	public function editProfile(Request $request)
 	{
 		$username = $this->app->escape($request->get('username'));

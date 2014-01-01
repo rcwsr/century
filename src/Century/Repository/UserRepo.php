@@ -12,14 +12,19 @@ class UserRepo Extends Repository
     {
         return 'user';
     }
-    public function getAllUsers($sort_by_points = true, $get_disqualified = false)
+    public function getAllUsers($sort_by_points = true, $get_disqualified = false, $only_users_with_points = false, $year = null)
     {
+        if(!$year){
+            $year = (int) date('Y');
+        }
+
 	    $sql_users = 'SELECT * FROM user ORDER BY name ASC';
     	$result_users = $this->db->fetchAll($sql_users);
         
-        $sql_rides = 'SELECT * FROM ride' ;   
-        $result_rides = $this->db->fetchAll($sql_rides);
-       
+        $sql_rides = 'SELECT * FROM ride WHERE year(date) = ?' ;
+        $result_rides = $this->db->fetchAll($sql_rides, array($year));
+
+
 
         $users = array();
 
@@ -42,6 +47,7 @@ class UserRepo Extends Repository
                 return strcmp($a->getPoints(), $b->getPoints());
             });
         }*/
+
         if($get_disqualified){
             $allowed_users = array();
             foreach($users as $user){
@@ -50,12 +56,24 @@ class UserRepo Extends Repository
             }
             $users = $allowed_users;
         }
+        if($only_users_with_points){
+            $users_with_points = array();
+            foreach($users as $user){
+                if($user->getPoints(null, $year) > 0){
+                    $users_with_points[] = $user;
+                }
+            }
+            $users = $users_with_points;
+        }
+
+
 
         if($sort_by_points){
             $points = array();
+
             foreach ($users as $key => $row)
             {
-                $points[$key] = $row->getPoints();
+                $points[$key] = $row->getPoints(null, $year);
             }
             array_multisort($points, SORT_DESC, $users);
         }
