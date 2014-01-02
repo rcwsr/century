@@ -1,4 +1,8 @@
 db.host: localhost
 db.name: century
-db.username: 
-db.password: 
+db.username:
+db.password:
+
+strava.secret:
+strava.id:
+strava.key:

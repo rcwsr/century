@@ -5,31 +5,21 @@ Application aimed to automate the process of collecting and collating century
 challenge data for LFCC
 
 
-Todo:
------
-
-1.  Users
-  * Users need a getPoints($year, $month) method !important
-  * ride/{user}
-  * add user_id to /add
-2. Leaderboard
-
-Getting started:
+Install:
 ----------------
+Install dependencies with `php composer update`.
 
-Install composer (http://getcomposer.org/)
+Add your database and Strava API details to `config/config.yml`. Since the app only needs to fetch basic ride data, your
+access token is sufficient, and no user auth is required.
 
- ```./composer.phar install```
-
-Create the config file:
-
- ```cp config/config.default.yml config/config.yml```
-
-Create the database schema and test data:
+Create database `century` and run the SQL below.
 
 
-<pre>
-CREATE TABLE `ride` (
+```
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+CREATE TABLE IF NOT EXISTS `ride` (
   `ride_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
   `km` decimal(10,1) DEFAULT NULL,
@@ -37,14 +27,14 @@ CREATE TABLE `ride` (
   `points` int(11) DEFAULT NULL,
   `url` mediumtext,
   `date` datetime DEFAULT NULL,
-  `date_added` datetime DEFAULT NULL,
+  `date_added` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `date_modified` datetime DEFAULT NULL,
   `details` longtext,
   `strava_ride_id` int(10) DEFAULT NULL,
   PRIMARY KEY (`ride_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=794 ;
 
-CREATE TABLE `user` (
+CREATE TABLE IF NOT EXISTS `user` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
@@ -55,8 +45,14 @@ CREATE TABLE `user` (
   `forum_name` varchar(100) DEFAULT '',
   `active` tinyint(4) DEFAULT '0',
   `strava` varchar(255) DEFAULT '',
+  `metric` tinyint(4) DEFAULT '1',
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=40 ;
+```
 
-</pre>
+
+Todo:
+-----
+1. Unit tests
+2. Validation of strava rides
