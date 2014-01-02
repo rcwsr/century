@@ -206,11 +206,22 @@ class User implements UserInterface
     {
         
     }
-    public function isDisqualified(){
+    public function isDisqualified($year = null){
+
+        if(!$year){
+            $year = (int) date('Y');
+        }
 
         $months = array();
-        $year = (int) date('Y');
-        foreach (range(1, (int) date('n')) as $month) {
+
+        if($year != (int) date('Y')){
+            $range = range(1, 12);
+        }
+        else{
+            $range = range(1, (int) date('n'));
+        }
+
+        foreach ($range as $month) {
             $months[] = array('month' => $month, 'points' => $this->getTotalPoints($month, $year));  
         }
        
@@ -220,7 +231,9 @@ class User implements UserInterface
                     return true;
             }
         }
+        return false;
     }
+
     public function isMetric(){
         return $this->metric;
     }

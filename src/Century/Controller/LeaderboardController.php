@@ -26,11 +26,9 @@ class LeaderboardController
 	    $users = $this->app['users']->getAllUsers(true, false, true, $year);
 
 
-
-
 	    $months = array();
 	    
-	    $count_qualified_users = count($rides);
+	    $count_qualified_users = count($users);
 
         if($all && $year != (int) date('Y')){
             $range = range(1, 12);
@@ -47,7 +45,7 @@ class LeaderboardController
 	        );
 	    }
 
-	    $disqualified_users = $this->app['users']-> getDisqualifiedUsers();
+	    $disqualified_users = $this->app['users']-> getDisqualifiedUsers($year);
 
 	    return array(
 	        'disqualified_users' => $disqualified_users,

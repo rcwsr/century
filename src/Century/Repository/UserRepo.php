@@ -12,7 +12,7 @@ class UserRepo Extends Repository
     {
         return 'user';
     }
-    public function getAllUsers($sort_by_points = true, $get_disqualified = false, $only_users_with_points = false, $year = null)
+    public function getAllUsers($sort_by_points = true, $get_disqualified = null, $only_users_with_points = false, $year = null)
     {
         if(!$year){
             $year = (int) date('Y');
@@ -23,7 +23,6 @@ class UserRepo Extends Repository
         
         $sql_rides = 'SELECT * FROM ride WHERE year(date) = ?' ;
         $result_rides = $this->db->fetchAll($sql_rides, array($year));
-
 
 
         $users = array();
@@ -47,15 +46,20 @@ class UserRepo Extends Repository
                 return strcmp($a->getPoints(), $b->getPoints());
             });
         }*/
+        //var_dump($get_disqualified);
+        if($get_disqualified === true || $get_disqualified === false){
 
-        if($get_disqualified){
-            $allowed_users = array();
+            $filtered_users = array();
             foreach($users as $user){
-                if(!$user->isDisqualified())
-                    $allowed_users[] = $user;
+                if($user->isDisqualified($year) === $get_disqualified)
+                    $filtered_users[] = $user;
             }
-            $users = $allowed_users;
+            $users = $filtered_users;
         }
+
+
+
+
         if($only_users_with_points){
             $users_with_points = array();
             foreach($users as $user){
@@ -108,13 +112,17 @@ class UserRepo Extends Repository
     {
 
     }
-    public function getDisqualifiedUsers(){
-       $users =  $this->getAllUsers(true);
-       $disqualified_users = array();
-       foreach($users as $u){
-            if($u->isDisqualified())
+    public function getDisqualifiedUsers($year = null){
+        if(!$year){
+            $year = (int) date('Y');
+        }
+
+        $users =  $this->getAllUsers(true, true, false, $year);
+        $disqualified_users = array();
+        foreach($users as $u){
+            if($u->isDisqualified($year))
                 $disqualified_users[] = $u;
-       }
+        }
 
        return $disqualified_users;
     }
