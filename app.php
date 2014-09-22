@@ -29,7 +29,6 @@ $app = new Silex\Application();
 /**
 Register Services
  **/
-$app->register(new ConfigServiceProvider(__DIR__ . '/config/config.yml'));
 
 $app->register(new Silex\Provider\SessionServiceProvider());
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
@@ -47,10 +46,10 @@ $app->register(new TwigServiceProvider(), array(
 $app->register(new DoctrineServiceProvider(), array(
     'db.options' => array(
         'driver' => 'pdo_mysql',
-        'host' => $app['db.host'],
-        'dbname' => $app['db.name'],
-        'user' => $app['db.username'],
-        'password' => $app['db.password']
+        'host' => getenv('db.host'),
+        'dbname' => getenv('db.name'),
+        'user' => getenv('db.user'),
+        'password' => getenv('db.password'),
     )
 ));
 
@@ -94,6 +93,13 @@ $app['twig'] = $app->share($app->extend('twig', function($twig, $app) {
     }
     return $twig;
 }));
+
+$client_secret = getenv('strava.secret');
+$client_id = getenv('strava.id');
+
+$app['stravaDL'] = $app->share(function () use ($client_secret, $client_id){
+    return new StravaDownloader($client_secret, $client_id);
+});
 
 
 /*
