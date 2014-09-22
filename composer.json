@@ -28,11 +28,11 @@
         "psr-0": { "Century": "src/" }
     },
     "minimum-stability": "dev",
-	"extra": {
-	        "heroku": {
-	            "framework": "silex",
-	            "document-root": "web",
-	            "index-document": "index.php"
-	        }
+    "extra": {
+        "heroku": {
+            "framework": "silex",
+            "document-root": "web",
+            "index-document": "index.php"
+        }
 	}
 }
