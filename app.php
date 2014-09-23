@@ -1,5 +1,5 @@
 <?php
-
+var_dump(true);
 require_once __DIR__.'/vendor/autoload.php';
 
 use Igorw\Silex\ConfigServiceProvider;
