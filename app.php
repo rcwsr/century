@@ -1,7 +1,7 @@
 <?php
-var_dump(true);
-require_once __DIR__.'/vendor/autoload.php';
 
+require_once __DIR__.'/vendor/autoload.php';
+var_dump(true);
 use Igorw\Silex\ConfigServiceProvider;
 use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\FormServiceProvider;
