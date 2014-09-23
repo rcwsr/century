@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__.'/vendor/autoload.php';
-var_dump(true);
+var_dump(getenv('db.name'));
 use Igorw\Silex\ConfigServiceProvider;
 use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\FormServiceProvider;
