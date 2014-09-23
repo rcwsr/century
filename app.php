@@ -21,6 +21,7 @@ use Century\Controller\UserRegistrationController;
 use Century\Controller\UserProfileController;
 use Century\Controller\RideDisplayController;
 use Century\Controller\LeaderboardController;
+use StravaDL\StravaDownloader;
 
 $app = new Silex\Application();
 
@@ -34,7 +35,6 @@ $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 $app->register(new Silex\Provider\SwiftmailerServiceProvider());
 $app->register(new FormServiceProvider());
-$app->register(new StravaDL\Provider\StravaDownloaderServiceProvider());
 $app->register(new TranslationServiceProvider(), array(
     'locale_fallback' => 'en',
 ));
