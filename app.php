@@ -1,7 +1,6 @@
 <?php
 
 require_once __DIR__.'/vendor/autoload.php';
-var_dump(getenv('db.name'));
 use Igorw\Silex\ConfigServiceProvider;
 use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\FormServiceProvider;
@@ -46,10 +45,10 @@ $app->register(new TwigServiceProvider(), array(
 $app->register(new DoctrineServiceProvider(), array(
     'db.options' => array(
         'driver' => 'pdo_mysql',
-        'host' => getenv('db.host'),
-        'dbname' => getenv('db.name'),
-        'user' => getenv('db.user'),
-        'password' => getenv('db.password'),
+        'host' => getenv('DB_HOST'),
+        'dbname' => getenv('DB_NAME'),
+        'user' => getenv('DB_USER'),
+        'password' => getenv('DB_PASS'),
     )
 ));
 
@@ -94,8 +93,8 @@ $app['twig'] = $app->share($app->extend('twig', function($twig, $app) {
     return $twig;
 }));
 
-$client_secret = getenv('strava.secret');
-$client_id = getenv('strava.id');
+$client_secret = getenv('STRAVA_SECRET');
+$client_id = getenv('STRAVA_ID');
 
 $app['stravaDL'] = $app->share(function () use ($client_secret, $client_id){
     return new StravaDownloader($client_secret, $client_id);
