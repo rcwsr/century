@@ -18,7 +18,7 @@ use StravaDL\StravaDownloader;
 $app = new Silex\Application();
 
 //Debug mode
-$app['debug'] = getenv("APP_ENV") == "dev";
+$app['debug'] = true;//getenv("APP_ENV") == "dev";
 
 /**
 Register Services
