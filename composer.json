@@ -22,7 +22,8 @@
         "symfony/yaml": "2.1.*",
         "igorw/config-service-provider": "*",
         "knplabs/repository-service-provider": "dev-master",
-        "robcaw/stravadl": "dev-master"
+        "robcaw/stravadl": "dev-master",
+        "mailgun/mailgun-php": "~1.7.1"
     },
     "autoload": {
         "psr-0": { "Century": "src/" }

@@ -14,6 +14,7 @@ use Century\Controller\UserProfileController;
 use Century\Controller\RideDisplayController;
 use Century\Controller\LeaderboardController;
 use StravaDL\StravaDownloader;
+use Mailgun\Mailgun;
 
 $app = new Silex\Application();
 
@@ -27,7 +28,6 @@ Register Services
 $app->register(new Silex\Provider\SessionServiceProvider());
 $app->register(new Silex\Provider\UrlGeneratorServiceProvider());
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
-$app->register(new Silex\Provider\SwiftmailerServiceProvider());
 $app->register(new FormServiceProvider());
 $app->register(new TranslationServiceProvider(), array(
     'locale_fallback' => 'en',
@@ -92,6 +92,10 @@ $client_id = getenv('STRAVA_ID');
 $app['strava.key'] = getenv('STRAVA_KEY');
 $app['stravaDL'] = $app->share(function () use ($client_secret, $client_id){
     return new StravaDownloader($client_secret, $client_id);
+});
+
+$app['mailgun'] = $app->share(function (){
+    return new Mailgun(getenv('MAILGUN_KEY'));
 });
 
 

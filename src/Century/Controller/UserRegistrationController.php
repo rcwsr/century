@@ -190,14 +190,12 @@ class UserRegistrationController
 				$encrypted_password =  $this->app['security.encoder.digest']->encodePassword($new_password, strtolower($user->getUsername()));
 				//update user with new password
 				$this->app['users']->update(array('password' => $encrypted_password), array('user_id' => $user->getUserId()));
-				
-				//send email
-				$message = \Swift_Message::newInstance()
-			        ->setSubject('Century Challenge: Password Reset')
-			        ->setFrom(array('century@robcaw.com'))
-			        ->setTo(array($user->getEmail()))
-			        ->setBody('Your new password: '.$new_password);
-    			$this->app['mailer']->send($message);
+
+                $this->app['mailgun']->sendMessage("robcaw.com", array(
+                    'from'    => 'century@robcaw.com',
+                    'to'      => $user->getEmail(),
+                    'subject' => 'Century Challenge: Password Reset',
+                    'text'    => 'Your new password: ' . $new_password));
 
 				return $this->app['twig']->render('success.html.twig', array('message' => 'A new password has been emailed to you'));	
 
