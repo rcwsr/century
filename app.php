@@ -1,20 +1,12 @@
 <?php
 
 require_once __DIR__.'/vendor/autoload.php';
-use Igorw\Silex\ConfigServiceProvider;
+
 use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\FormServiceProvider;
-use Silex\Provider\SecurityServiceProvider;
 use Silex\Provider\TranslationServiceProvider;
 use Silex\Provider\TwigServiceProvider;
-use Silex\Provider\SessionServiceProvider;
-use Silex\Provider\UrlGeneratorServiceProvider;
 use Knp\Provider\RepositoryServiceProvider;
-use Century\Provider\UserProvider;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-//use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Validator\Constraints as Assert;
 use Century\Controller\RideModificationController;
 use Century\Controller\UserRegistrationController;
@@ -25,6 +17,8 @@ use StravaDL\StravaDownloader;
 
 $app = new Silex\Application();
 
+//Debug mode
+$app['debug'] = getenv("APP_ENV") == "dev";
 
 /**
 Register Services
@@ -48,7 +42,7 @@ $app->register(new DoctrineServiceProvider(), array(
         'host' => getenv('DB_HOST'),
         'dbname' => getenv('DB_NAME'),
         'user' => getenv('DB_USER'),
-        'password' => getenv('DB_PASS'),
+        'password' => getenv('DB_PASSWORD'),
     )
 ));
 
@@ -95,7 +89,7 @@ $app['twig'] = $app->share($app->extend('twig', function($twig, $app) {
 
 $client_secret = getenv('STRAVA_SECRET');
 $client_id = getenv('STRAVA_ID');
-
+$app['strava.key'] = getenv('STRAVA_KEY');
 $app['stravaDL'] = $app->share(function () use ($client_secret, $client_id){
     return new StravaDownloader($client_secret, $client_id);
 });
@@ -130,7 +124,8 @@ $app['leaderboard.controller'] = $app->share(function() use ($app) {
     return new LeaderboardController($app);
 });
 
-$app['debug'] = true;
+
+
 
 /**
 Controllers:
