@@ -32,8 +32,7 @@
     "extra": {
         "heroku": {
             "framework": "silex",
-            "document-root": "web",
-            "index-document": "index.php"
+            "document-root": "web"
         }
 	}
 }
