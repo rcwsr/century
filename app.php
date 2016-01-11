@@ -39,10 +39,10 @@ $app->register(new TwigServiceProvider(), array(
 $app->register(new DoctrineServiceProvider(), array(
     'db.options' => array(
         'driver' => 'pdo_mysql',
-        'host' => getenv('DB_HOST'),
-        'dbname' => getenv('DB_NAME'),
-        'user' => getenv('DB_USER'),
-        'password' => getenv('DB_PASSWORD'),
+        'host' => getenv('VDT_DB_STRAWBERRY_HOST'),
+        'dbname' => getenv('VDT_DB_STRAWBERRY_NAME'),
+        'user' => getenv('VDT_DB_STRAWBERRY_USER'),
+        'password' => getenv('VDT_DB_STRAWBERRY_PASS'),
     )
 ));
 
