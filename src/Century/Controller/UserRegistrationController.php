@@ -191,8 +191,8 @@ class UserRegistrationController
 				//update user with new password
 				$this->app['users']->update(array('password' => $encrypted_password), array('user_id' => $user->getUserId()));
 
-                $this->app['mailgun']->sendMessage("robcaw.com", array(
-                    'from'    => 'century@robcaw.com',
+                $this->app['mailgun']->sendMessage("century.robcaw.com", array(
+                    'from'    => 'century@century.cawser.me',
                     'to'      => $user->getEmail(),
                     'subject' => 'Century Challenge: Password Reset',
                     'text'    => 'Your new password: ' . $new_password));
